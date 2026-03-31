@@ -52,6 +52,8 @@ describe('HomeZone', () => {
     // Each piece renders a piece-token testid inside an SVG
     const tokens = screen.getAllByTestId('piece-token')
     expect(tokens).toHaveLength(4) // 2 player + 2 AI
+    expect(screen.getAllByTestId('player-ribbon')).toHaveLength(2)
+    expect(screen.getAllByTestId('ai-crest')).toHaveLength(2)
   })
 
   it('calls onPieceSelect when a selectable HOME piece is clicked', () => {

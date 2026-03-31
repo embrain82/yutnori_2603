@@ -139,6 +139,8 @@ describe('Board with props', () => {
     )
     const tokens = container.querySelectorAll('[data-testid="piece-token"]')
     expect(tokens).toHaveLength(2)
+    expect(container.querySelectorAll('[data-testid="player-ribbon"]')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-testid="ai-crest"]')).toHaveLength(1)
   })
 
   it('renders MoveHighlight for each valid destination when a piece is selected', () => {
@@ -218,5 +220,24 @@ describe('Board with props', () => {
     // No selectable hit areas during animation
     const hitAreas = container.querySelectorAll('[data-testid="piece-hit-area"]')
     expect(hitAreas).toHaveLength(0)
+  })
+
+  it('renders the animating piece with the same character token art', () => {
+    const pieces = [makePiece('p1', 'player', 3, 'outer', 3)]
+    const { container } = render(
+      <Board
+        {...defaultProps}
+        pieces={pieces}
+        isAnimating={true}
+        animatingPieceId="p1"
+        animatingPosition={{ x: 120, y: 180 }}
+      />,
+    )
+
+    const animatingPiece = container.querySelector('[data-testid="animating-piece"]')
+    expect(animatingPiece).not.toBeNull()
+    expect(
+      animatingPiece?.querySelector('[data-testid="player-ribbon"]'),
+    ).not.toBeNull()
   })
 })

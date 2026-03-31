@@ -9,16 +9,17 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   evaluateMove,
+  selectAiCandidate,
   selectAiMove,
   executeAiTurn,
-  AI_CONFIG,
   DEFAULT_AI_WEIGHTS,
   type AiWeights,
 } from '@/lib/yut/ai'
-import { findValidMoves, createInitialGameState, createTurnState, processThrow, consumeMove, checkWinCondition } from '@/lib/yut/game'
-import { getAvailableMoves, enterBoard } from '@/lib/yut/movement'
+import { findValidMoves, createInitialGameState, createTurnState, processThrow, checkWinCondition } from '@/lib/yut/game'
+import { getAvailableMoves } from '@/lib/yut/movement'
 import { applyMove, confirmStack } from '@/lib/yut/capture'
 import { generateThrow } from '@/lib/yut/throw'
+import type { MoveCandidate } from '@/lib/yut'
 import { HOME, FINISH } from '@/lib/yut/types'
 import type { PieceState, Team, ThrowResult, MoveResult, GameLogicState } from '@/lib/yut/types'
 
@@ -139,10 +140,6 @@ describe('evaluateMove', () => {
   })
 
   it('scores move with capture opportunity higher than plain move', () => {
-    const pieces: PieceState[] = [
-      makeBoardPiece('ai1', 'ai', 'outer', 3, 3),
-      makeBoardPiece('p1', 'player', 'outer', 5, 5),
-    ]
     const captureMove = makeMoveResult(5, 'outer', 5, false, [4])
     const plainMove = makeMoveResult(5, 'outer', 5, false, [4])
 
@@ -294,6 +291,71 @@ describe('selectAiMove', () => {
     const throwResult = makeThrow('do', 1, false)
     const result = selectAiMove(pieces, 'ai', throwResult)
     expect(result).toBeNull()
+  })
+})
+
+describe('selectAiCandidate', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('returns a random candidate when Math.random is below randomMoveRate', () => {
+    const randomSpy = vi.spyOn(Math, 'random')
+    randomSpy.mockReturnValueOnce(0.2).mockReturnValueOnce(0.9)
+
+    const throwResult = makeThrow('gae', 2, false)
+    const pieces: PieceState[] = [
+      makeBoardPiece('ai1', 'ai', 'outer', 3, 3),
+      makeBoardPiece('ai2', 'ai', 'outer', 8, 8),
+    ]
+    const candidates: MoveCandidate[] = [
+      {
+        pieceId: 'ai1',
+        result: throwResult,
+        routeChoice: 'continue',
+        moveResult: makeMoveResult(5, 'outer', 5, false, [4]),
+      },
+      {
+        pieceId: 'ai2',
+        result: throwResult,
+        routeChoice: 'continue',
+        moveResult: makeMoveResult(10, 'outer', 10, false, [9]),
+      },
+    ]
+
+    const selected = selectAiCandidate(candidates, pieces, 'ai')
+
+    expect(selected).toEqual(candidates[1])
+  })
+
+  it('ignores capture moves when the captureIgnoreRate branch is taken', () => {
+    const randomSpy = vi.spyOn(Math, 'random')
+    randomSpy.mockReturnValueOnce(0.9).mockReturnValueOnce(0.2)
+
+    const throwResult = makeThrow('gae', 2, false)
+    const pieces: PieceState[] = [
+      makeBoardPiece('ai1', 'ai', 'outer', 3, 3),
+      makeBoardPiece('ai2', 'ai', 'outer', 17, 17),
+      makeBoardPiece('p1', 'player', 'outer', 5, 5),
+    ]
+    const candidates: MoveCandidate[] = [
+      {
+        pieceId: 'ai1',
+        result: throwResult,
+        routeChoice: 'continue',
+        moveResult: makeMoveResult(5, 'outer', 5, false, [4]),
+      },
+      {
+        pieceId: 'ai2',
+        result: throwResult,
+        routeChoice: 'continue',
+        moveResult: makeMoveResult(19, 'outer', 19, false, [18]),
+      },
+    ]
+
+    const selected = selectAiCandidate(candidates, pieces, 'ai')
+
+    expect(selected?.pieceId).toBe('ai2')
   })
 })
 
@@ -583,7 +645,7 @@ describe('win rate simulation', () => {
 
       // MOVE phase
       let pieces = state.pieces.map((p) => ({ ...p }))
-      let pendingMoves = [...turnState.pendingMoves]
+      const pendingMoves = [...turnState.pendingMoves]
       let extraThrows: ThrowResult[] = []
 
       let moveIterations = 0
@@ -699,13 +761,11 @@ describe('win rate simulation', () => {
 
   it('player wins 60-90% of games over 500 simulations', () => {
     let playerWins = 0
-    let aiWins = 0
     const TOTAL_GAMES = 500
 
     for (let i = 0; i < TOTAL_GAMES; i++) {
       const result = simulateFullGame()
       if (result.winner === 'player') playerWins++
-      if (result.winner === 'ai') aiWins++
     }
 
     const winRate = playerWins / TOTAL_GAMES

@@ -40,26 +40,26 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### 3D Yut Throwing
 
-- [ ] **THROW-01**: Three.js + Cannon.js로 윷패 4개가 3D 물리 시뮬레이션으로 던져진다
-- [ ] **THROW-02**: 윷패가 공중에서 떨어져 바닥에 통통 굴러가며 정지하는 효과가 구현된다
-- [ ] **THROW-03**: 결과는 사전에 RNG로 결정되고 물리 애니메이션은 시각적 연출이다
-- [ ] **THROW-04**: 던지기 버튼을 누르면 3D 던지기 씬이 실행된다
-- [ ] **THROW-05**: 물리 시뮬레이션 완료 후 결과(도/개/걸/윷/모)가 큰 텍스트로 표시된다
+- [x] **THROW-01**: Three.js + Cannon.js로 윷패 4개가 3D 물리 시뮬레이션으로 던져진다
+- [x] **THROW-02**: 윷패가 공중에서 떨어져 바닥에 통통 굴러가며 정지하는 효과가 구현된다
+- [x] **THROW-03**: 결과는 사전에 RNG로 결정되고 물리 애니메이션은 시각적 연출이다
+- [x] **THROW-04**: 던지기 버튼을 누르면 3D 던지기 씬이 실행된다
+- [x] **THROW-05**: 물리 시뮬레이션 완료 후 결과(도/개/걸/윷/모)가 큰 텍스트로 표시된다
 
 ### Visual & UX
 
-- [ ] **VIS-01**: 귀여운/캐주얼 스타일의 캐릭터 말이 사용된다
-- [ ] **VIS-02**: 현재 턴(플레이어/AI)이 명확히 표시된다
-- [ ] **VIS-03**: AI 턴 시 "생각 중..." 상태가 표시된다
-- [ ] **VIS-04**: AI가 상황에 따라 이모지 표정 반응을 보여준다 (기쁨/걱정/의기양양)
-- [ ] **VIS-05**: 승리 시 컨페티 + 축하 애니메이션이 재생된다
-- [ ] **VIS-06**: 패배 시 격려 메시지와 재시작 옵션이 제공된다
+- [x] **VIS-01**: 귀여운/캐주얼 스타일의 캐릭터 말이 사용된다
+- [x] **VIS-02**: 현재 턴(플레이어/AI)이 명확히 표시된다
+- [x] **VIS-03**: AI 턴 시 "생각 중..." 상태가 표시된다
+- [x] **VIS-04**: AI가 상황에 따라 이모지 표정 반응을 보여준다 (기쁨/걱정/의기양양)
+- [x] **VIS-05**: 승리 시 컨페티 + 축하 애니메이션이 재생된다
+- [x] **VIS-06**: 패배 시 격려 메시지와 재시작 옵션이 제공된다
 
 ### Integration
 
-- [ ] **INTG-01**: 승리 시 WebView postMessage 브리지로 쿠폰 지급 메시지가 전달된다
-- [ ] **INTG-02**: 게임이 네이티브 앱 WebView에 iframe으로 임베딩된다
-- [ ] **INTG-03**: 게임 시작/종료 상태가 네이티브 앱에 전달된다
+- [x] **INTG-01**: 승리 시 WebView postMessage 브리지로 쿠폰 지급 메시지가 전달된다
+- [x] **INTG-02**: 게임이 네이티브 앱 WebView에 iframe으로 임베딩된다
+- [x] **INTG-03**: 게임 시작/종료 상태가 네이티브 앱에 전달된다
 
 ## v2 Requirements
 
@@ -122,20 +122,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BOARD-04 | Phase 3: 2D Board Rendering | Complete |
 | BOARD-05 | Phase 3: 2D Board Rendering | Complete |
 | BOARD-06 | Phase 3: 2D Board Rendering | Complete |
-| THROW-01 | Phase 4: 3D Yut Throwing | Pending |
-| THROW-02 | Phase 4: 3D Yut Throwing | Pending |
-| THROW-03 | Phase 4: 3D Yut Throwing | Pending |
-| THROW-04 | Phase 4: 3D Yut Throwing | Pending |
-| THROW-05 | Phase 4: 3D Yut Throwing | Pending |
-| VIS-01 | Phase 6: Visual Polish & Delight | Pending |
-| VIS-02 | Phase 5: Game Screens & Integration | Pending |
-| VIS-03 | Phase 5: Game Screens & Integration | Pending |
-| VIS-04 | Phase 5: Game Screens & Integration | Pending |
-| VIS-05 | Phase 6: Visual Polish & Delight | Pending |
-| VIS-06 | Phase 6: Visual Polish & Delight | Pending |
-| INTG-01 | Phase 5: Game Screens & Integration | Pending |
-| INTG-02 | Phase 5: Game Screens & Integration | Pending |
-| INTG-03 | Phase 5: Game Screens & Integration | Pending |
+| THROW-01 | Phase 4: 3D Yut Throwing | Complete |
+| THROW-02 | Phase 4: 3D Yut Throwing | Complete |
+| THROW-03 | Phase 4: 3D Yut Throwing | Complete |
+| THROW-04 | Phase 4: 3D Yut Throwing | Complete |
+| THROW-05 | Phase 4: 3D Yut Throwing | Complete |
+| VIS-01 | Phase 6: Visual Polish & Delight | Complete |
+| VIS-02 | Phase 5: Game Screens & Integration | Complete |
+| VIS-03 | Phase 5: Game Screens & Integration | Complete |
+| VIS-04 | Phase 5: Game Screens & Integration | Complete |
+| VIS-05 | Phase 6: Visual Polish & Delight | Complete |
+| VIS-06 | Phase 6: Visual Polish & Delight | Complete |
+| INTG-01 | Phase 5: Game Screens & Integration | Complete |
+| INTG-02 | Phase 5: Game Screens & Integration | Complete |
+| INTG-03 | Phase 5: Game Screens & Integration | Complete |
 
 **Coverage:**
 - v1 requirements: 36 total
@@ -144,4 +144,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-31*
-*Last updated: 2026-03-31 after roadmap creation*
+*Last updated: 2026-04-01 after Phase 06 completion*

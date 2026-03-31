@@ -12,12 +12,12 @@ Build a complete Yut Nori (윷놀이) HTML5 game from pure logic outward. Start 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Board Graph & Movement Logic** - Pure game logic: 29-node board graph, path resolution, throw generation, movement rules, win condition
-- [ ] **Phase 2: Capture, Stacking & AI** - Interaction rules (capture, stacking, groups) and easy-difficulty AI with turn orchestration
-- [ ] **Phase 3: 2D Board Rendering** - SVG board visualization with piece tokens, path highlights, movement animation, and shortcut choice UI
-- [ ] **Phase 4: 3D Yut Throwing** - Three.js + cannon-es physics scene with predetermined results, settle detection, and GPU resource management
-- [ ] **Phase 5: Game Screens & Integration** - Full game flow with turn indicators, AI persona, screen orchestration, and WebView bridge
-- [ ] **Phase 6: Visual Polish & Delight** - Cute character pieces, victory/defeat celebrations, and visual refinement
+- [x] **Phase 1: Board Graph & Movement Logic** - Pure game logic: 29-node board graph, path resolution, throw generation, movement rules, win condition
+- [x] **Phase 2: Capture, Stacking & AI** - Interaction rules (capture, stacking, groups) and easy-difficulty AI with turn orchestration
+- [x] **Phase 3: 2D Board Rendering** - SVG board visualization with piece tokens, path highlights, movement animation, and shortcut choice UI
+- [x] **Phase 4: 3D Yut Throwing** - Three.js + cannon-es physics scene with predetermined results, settle detection, and GPU resource management
+- [x] **Phase 5: Game Screens & Integration** - Full game flow with turn indicators, AI persona, screen orchestration, and WebView bridge
+- [x] **Phase 6: Visual Polish & Delight** - Cute character pieces, victory/defeat celebrations, and visual refinement
 
 ## Phase Details
 
@@ -82,13 +82,13 @@ Plans:
   3. The final stick orientations match the predetermined RNG result (not physics-determined)
   4. After sticks settle, the result (do/gae/geol/yut/mo) displays prominently on screen
   5. The 3D scene cleans up GPU resources after each throw (no memory leaks across repeated throws)
-**Plans**: TBD
+**Plans:** 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
-- [ ] 04-03: TBD
+- [x] 04-01-PLAN.md -- Dependencies, deterministic throw pose mapping, and explicit resource cleanup helper
+- [x] 04-02-PLAN.md -- Three.js + cannon-es scene controller with settle correction and hook lifecycle
+- [x] 04-03-PLAN.md -- Overlay UI, centered Korean result card, and board-backed throw demo page
 
 ### Phase 5: Game Screens & Integration
 **Goal**: A complete playable game flow from start to finish -- player and AI take turns, the game tracks whose turn it is, and victory triggers coupon delivery to the native app
@@ -100,13 +100,13 @@ Plans:
   3. The game runs as a complete loop: throw -> select piece -> move -> switch turn, repeating until victory
   4. On victory, the game sends a coupon delivery message to the native app via postMessage bridge
   5. The game loads and functions correctly when embedded as an iframe in a WebView container
-**Plans**: TBD
+**Plans**: 3 plan(s) in 3 wave(s)
 **UI hint**: yes
 
 Plans:
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
-- [ ] 05-03: TBD
+- [x] 05-01-PLAN.md -- Move-candidate/session utilities and Zustand game store foundation
+- [x] 05-02-PLAN.md -- Idle/play/result screens with turn banner, AI reaction, and board-backed play shell
+- [x] 05-03-PLAN.md -- AI turn pacing, WebView bridge messages, and final app/page integration
 
 ### Phase 6: Visual Polish & Delight
 **Goal**: The game feels delightful and polished -- cute character pieces replace placeholder tokens, victories celebrate with confetti, and defeats offer warm encouragement
@@ -116,12 +116,12 @@ Plans:
   1. Pieces on the board are cute, casual character illustrations instead of plain geometric tokens
   2. Winning triggers a confetti explosion and congratulatory celebration animation
   3. Losing shows an encouraging message with a clear restart option
-**Plans**: TBD
+**Plans**: 2 plan(s) in 2 wave(s)
 **UI hint**: yes
 
 Plans:
-- [ ] 06-01: TBD
-- [ ] 06-02: TBD
+- [x] 06-01-PLAN.md -- Character piece tokens and HOME/board visual refresh
+- [x] 06-02-PLAN.md -- Victory confetti, defeat encouragement, and result-screen polish
 
 ## Progress
 
@@ -133,7 +133,7 @@ Note: Phase 3 and Phase 4 can run in parallel (different dependency chains).
 |-------|----------------|--------|-----------|
 | 1. Board Graph & Movement Logic | 3/3 | Complete | 2026-03-31 |
 | 2. Capture, Stacking & AI | 2/2 | Complete | 2026-03-31 |
-| 3. 2D Board Rendering | 0/3 | Planning complete | - |
-| 4. 3D Yut Throwing | 0/3 | Not started | - |
-| 5. Game Screens & Integration | 0/3 | Not started | - |
-| 6. Visual Polish & Delight | 0/2 | Not started | - |
+| 3. 2D Board Rendering | 3/3 | Complete | 2026-03-31 |
+| 4. 3D Yut Throwing | 3/3 | Complete | 2026-03-31 |
+| 5. Game Screens & Integration | 3/3 | Complete | 2026-04-01 |
+| 6. Visual Polish & Delight | 2/2 | Complete | 2026-04-01 |

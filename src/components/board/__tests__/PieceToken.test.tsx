@@ -30,6 +30,7 @@ describe('PieceToken', () => {
     const token = screen.getByTestId('piece-token')
     expect(token).toHaveAttribute('fill', '#42A5F5')
     expect(token).toHaveAttribute('stroke', '#1565C0')
+    expect(screen.getByTestId('player-ribbon')).toBeInTheDocument()
   })
 
   it('renders AI token with red fill (#EF5350) and stroke (#C62828)', () => {
@@ -41,6 +42,7 @@ describe('PieceToken', () => {
     const token = screen.getByTestId('piece-token')
     expect(token).toHaveAttribute('fill', '#EF5350')
     expect(token).toHaveAttribute('stroke', '#C62828')
+    expect(screen.getByTestId('ai-crest')).toBeInTheDocument()
   })
 
   it('shows stack badge with count 2 when stackCount is 2', () => {
@@ -81,12 +83,20 @@ describe('PieceToken', () => {
   })
 
   it('renders selection ring when isSelected is true', () => {
-    render(
+    const { container } = render(
       <svg>
         <PieceToken {...defaultProps} isSelected={true} />
       </svg>,
     )
-    expect(screen.getByTestId('selection-ring')).toBeInTheDocument()
+    const selectionRing = screen.getByTestId('selection-ring')
+    const characterDetails = screen.getByTestId('character-details')
+
+    expect(selectionRing).toBeInTheDocument()
+    expect(
+      characterDetails.compareDocumentPosition(selectionRing)
+        & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0)
+    expect(container.querySelector('[data-testid="selection-ring"]')).not.toBeNull()
   })
 
   it('calls onSelect when invisible hit area is clicked', () => {

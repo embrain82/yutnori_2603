@@ -76,6 +76,9 @@ interface BoardProps {
  */
 const STACK_OFFSET_X = [-8, 8]
 
+const BOARD_PRESENTATION_CLASS_NAME =
+  'w-full max-w-[500px] aspect-square overflow-visible drop-shadow-[0_18px_28px_rgba(114,72,23,0.14)]'
+
 /**
  * Renders the complete Yut Nori game board as an SVG element.
  *
@@ -121,11 +124,12 @@ export function Board({
 
   // Should we show interactive elements?
   const showInteraction = !isAnimating
+  // Phase 6 keeps the station geometry frozen and only refreshes the board surface presentation.
 
   return (
     <svg
       viewBox={BOARD_VIEWBOX}
-      className="w-full max-w-[500px] aspect-square"
+      className={BOARD_PRESENTATION_CLASS_NAME}
       style={{ touchAction: 'none' }}
       role="img"
       aria-label="윷놀이 게임판"

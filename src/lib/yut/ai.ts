@@ -16,6 +16,7 @@ import type {
   MoveResult,
   GameLogicState,
 } from '@/lib/yut/types'
+import type { MoveCandidate } from '@/lib/yut/moveCandidates'
 import { findValidMoves, processThrow, consumeMove, checkWinCondition } from '@/lib/yut/game'
 import { getAvailableMoves } from '@/lib/yut/movement'
 import { applyMove, confirmStack } from '@/lib/yut/capture'
@@ -55,6 +56,7 @@ export interface ScoredMove {
   score: number
   wouldCapture: boolean
   wouldStack: boolean
+  candidate?: MoveCandidate
 }
 
 /**
@@ -147,6 +149,55 @@ export function evaluateMove(
   return score
 }
 
+function scoreCandidate(
+  candidate: MoveCandidate,
+  pieces: PieceState[],
+  team: Team,
+  weights: AiWeights
+): ScoredMove {
+  const destination = candidate.moveResult.newPosition.station
+
+  return {
+    pieceId: candidate.pieceId,
+    moveResult: candidate.moveResult,
+    score: evaluateMove(pieces, candidate.pieceId, candidate.moveResult, weights),
+    wouldCapture: hasOpponentAt(pieces, team, destination),
+    wouldStack: hasFriendlyAt(pieces, candidate.pieceId, team, destination),
+    candidate,
+  }
+}
+
+export function selectAiCandidate(
+  candidates: MoveCandidate[],
+  pieces: PieceState[],
+  team: Team,
+  weights: AiWeights = DEFAULT_AI_WEIGHTS
+): MoveCandidate | null {
+  if (candidates.length === 0) {
+    return null
+  }
+
+  const scoredMoves = candidates.map((candidate) =>
+    scoreCandidate(candidate, pieces, team, weights)
+  )
+
+  if (Math.random() < AI_CONFIG.randomMoveRate) {
+    const idx = Math.floor(Math.random() * scoredMoves.length)
+    return scoredMoves[idx]?.candidate ?? null
+  }
+
+  let selectionPool = scoredMoves
+  if (Math.random() < AI_CONFIG.captureIgnoreRate) {
+    const nonCaptureMoves = scoredMoves.filter((candidate) => !candidate.wouldCapture)
+    if (nonCaptureMoves.length > 0) {
+      selectionPool = nonCaptureMoves
+    }
+  }
+
+  selectionPool.sort((a, b) => b.score - a.score)
+  return selectionPool[0]?.candidate ?? null
+}
+
 /**
  * Select the best AI move from all legal options for a given throw.
  *
@@ -171,56 +222,29 @@ export function selectAiMove(
 
   if (possibleMoves.length === 0) return null
 
-  // Build scored move candidates
-  const scoredMoves: ScoredMove[] = []
+  const candidates: MoveCandidate[] = []
   for (const move of possibleMoves) {
     const piece = pieces.find((p) => p.id === move.pieceId)!
     const { moveResult } = getAvailableMoves(piece, throwResult.steps)
     if (!moveResult) continue
 
-    const destination = moveResult.newPosition.station
-    const wouldCapture = hasOpponentAt(pieces, team, destination)
-    const wouldStack = hasFriendlyAt(pieces, move.pieceId, team, destination)
-
-    const score = evaluateMove(pieces, move.pieceId, moveResult, weights)
-
-    scoredMoves.push({
+    candidates.push({
       pieceId: move.pieceId,
+      result: throwResult,
+      routeChoice: 'continue',
       moveResult,
-      score,
-      wouldCapture,
-      wouldStack,
     })
   }
 
-  if (scoredMoves.length === 0) return null
-
-  // Step 1: Decide random vs best move
-  const randomRoll = Math.random()
-  if (randomRoll < AI_CONFIG.randomMoveRate) {
-    // Pick a random move (AI-03: 40% random per D-09)
-    const idx = Math.floor(Math.random() * scoredMoves.length)
-    const selected = scoredMoves[idx]
-    return { pieceId: selected.pieceId, moveResult: selected.moveResult }
+  const selected = selectAiCandidate(candidates, pieces, team, weights)
+  if (!selected) {
+    return null
   }
 
-  // Step 2: Decide whether to ignore captures (AI-04: 30% per D-11)
-  const captureIgnoreRoll = Math.random()
-  let candidates = scoredMoves
-  if (captureIgnoreRoll < AI_CONFIG.captureIgnoreRate) {
-    // Filter out capture moves
-    const nonCaptureMoves = scoredMoves.filter((m) => !m.wouldCapture)
-    if (nonCaptureMoves.length > 0) {
-      candidates = nonCaptureMoves
-    }
-    // If all moves capture, keep all candidates (fallback)
+  return {
+    pieceId: selected.pieceId,
+    moveResult: selected.moveResult,
   }
-
-  // Step 3: Pick the highest-scored move from candidates (60% of the time)
-  candidates.sort((a, b) => b.score - a.score)
-  const best = candidates[0]
-
-  return { pieceId: best.pieceId, moveResult: best.moveResult }
 }
 
 /**
