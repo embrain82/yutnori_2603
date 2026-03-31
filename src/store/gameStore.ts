@@ -539,13 +539,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   selectPiece: (pieceId) => {
-    const { phase, moveCandidates } = get()
+    const current = get()
+    const { phase, moveCandidates } = current
     if (phase !== 'selectingPiece') {
       return
     }
 
     const pieceCandidates = moveCandidates.filter((candidate) => candidate.pieceId === pieceId)
     if (pieceCandidates.length === 0) {
+      return
+    }
+
+    if (pieceCandidates.length === 1) {
+      set(beginCandidateResolution(current, pieceCandidates[0]))
       return
     }
 

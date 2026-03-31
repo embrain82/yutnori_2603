@@ -1,6 +1,7 @@
 import {
   AmbientLight,
   BoxGeometry,
+  CanvasTexture,
   DirectionalLight,
   Euler,
   Mesh,
@@ -8,6 +9,7 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   Quaternion as ThreeQuaternion,
+  SRGBColorSpace,
   Scene,
   Vector3,
   WebGLRenderer,
@@ -66,6 +68,103 @@ const LAUNCH_SEEDS = [
   { impulse: new Vec3(0.8, 5.3, -1.2), torque: new Vec3(5, 2, -3) },
 ] as const
 
+function createRoundedRectPath(
+  context: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number,
+): void {
+  const safeRadius = Math.min(radius, width / 2, height / 2)
+
+  context.beginPath()
+  context.moveTo(x + safeRadius, y)
+  context.lineTo(x + width - safeRadius, y)
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius)
+  context.lineTo(x + width, y + height - safeRadius)
+  context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height)
+  context.lineTo(x + safeRadius, y + height)
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius)
+  context.lineTo(x, y + safeRadius)
+  context.quadraticCurveTo(x, y, x + safeRadius, y)
+  context.closePath()
+}
+
+function createStickFaceTexture(face: 'flat' | 'round'): CanvasTexture {
+  const textureCanvas = document.createElement('canvas')
+  textureCanvas.width = 320
+  textureCanvas.height = 96
+
+  const context = textureCanvas.getContext('2d')
+  if (!context) {
+    const fallbackTexture = new CanvasTexture(textureCanvas)
+    fallbackTexture.colorSpace = SRGBColorSpace
+    return fallbackTexture
+  }
+
+  const gradient = context.createLinearGradient(0, 0, textureCanvas.width, textureCanvas.height)
+  if (face === 'flat') {
+    gradient.addColorStop(0, '#FFF4D2')
+    gradient.addColorStop(0.55, '#F6D496')
+    gradient.addColorStop(1, '#DEAE6A')
+  } else {
+    gradient.addColorStop(0, '#A66A39')
+    gradient.addColorStop(0.48, '#7A4A24')
+    gradient.addColorStop(1, '#5C3116')
+  }
+
+  context.fillStyle = gradient
+  context.fillRect(0, 0, textureCanvas.width, textureCanvas.height)
+
+  context.lineWidth = 4
+  context.strokeStyle = face === 'flat' ? 'rgba(112, 67, 24, 0.28)' : 'rgba(255, 232, 200, 0.16)'
+  createRoundedRectPath(context, 8, 8, textureCanvas.width - 16, textureCanvas.height - 16, 20)
+  context.stroke()
+
+  if (face === 'flat') {
+    context.fillStyle = 'rgba(153, 76, 24, 0.92)'
+    createRoundedRectPath(context, 70, 34, textureCanvas.width - 140, 28, 14)
+    context.fill()
+
+    context.fillStyle = 'rgba(255, 241, 214, 0.9)'
+    context.beginPath()
+    context.arc(46, textureCanvas.height / 2, 11, 0, Math.PI * 2)
+    context.arc(textureCanvas.width - 46, textureCanvas.height / 2, 11, 0, Math.PI * 2)
+    context.fill()
+
+    context.strokeStyle = 'rgba(126, 67, 26, 0.38)'
+    context.lineWidth = 3
+    context.beginPath()
+    context.moveTo(22, 24)
+    context.lineTo(textureCanvas.width - 22, 24)
+    context.moveTo(22, textureCanvas.height - 24)
+    context.lineTo(textureCanvas.width - 22, textureCanvas.height - 24)
+    context.stroke()
+  } else {
+    context.fillStyle = 'rgba(255, 220, 171, 0.32)'
+    context.beginPath()
+    context.ellipse(textureCanvas.width / 2, 34, 112, 22, -0.08, 0, Math.PI * 2)
+    context.fill()
+
+    context.fillStyle = 'rgba(255, 243, 219, 0.18)'
+    context.beginPath()
+    context.ellipse(textureCanvas.width / 2, 62, 78, 12, 0.03, 0, Math.PI * 2)
+    context.fill()
+
+    context.strokeStyle = 'rgba(255, 234, 207, 0.18)'
+    context.lineWidth = 3
+    context.beginPath()
+    context.moveTo(28, 72)
+    context.quadraticCurveTo(textureCanvas.width / 2, 88, textureCanvas.width - 28, 72)
+    context.stroke()
+  }
+
+  const texture = new CanvasTexture(textureCanvas)
+  texture.colorSpace = SRGBColorSpace
+  return texture
+}
+
 export function createYutThrowScene(params: {
   canvas: HTMLCanvasElement
   onPhaseChange?: (phase: YutThrowScenePhase) => void
@@ -96,6 +195,8 @@ export function createYutThrowScene(params: {
   const floorMesh = resourceTracker.track(new Mesh(floorGeometry, floorMaterial))
   const ambientLight = resourceTracker.track(new AmbientLight('#FFF3D8', 1.65))
   const directionalLight = resourceTracker.track(new DirectionalLight('#F3D3A1', 1.15))
+  const flatFaceTexture = resourceTracker.track(createStickFaceTexture('flat'))
+  const roundFaceTexture = resourceTracker.track(createStickFaceTexture('round'))
   const stickGeometry = resourceTracker.track(
     new BoxGeometry(STICK_SIZE.width, STICK_SIZE.height, STICK_SIZE.length),
   )
@@ -121,12 +222,22 @@ export function createYutThrowScene(params: {
 
   for (let slot = 0; slot < SLOT_X_POSITIONS.length; slot++) {
     const stickMaterials = resourceTracker.track([
-      new MeshStandardMaterial({ color: '#C7905C', roughness: 0.9, metalness: 0 }),
-      new MeshStandardMaterial({ color: '#C7905C', roughness: 0.9, metalness: 0 }),
-      new MeshStandardMaterial({ color: '#E4B67A', roughness: 0.86, metalness: 0 }),
-      new MeshStandardMaterial({ color: '#9A6134', roughness: 0.96, metalness: 0 }),
-      new MeshStandardMaterial({ color: '#B97C4A', roughness: 0.9, metalness: 0 }),
-      new MeshStandardMaterial({ color: '#B97C4A', roughness: 0.9, metalness: 0 }),
+      new MeshStandardMaterial({ color: '#C78E57', roughness: 0.9, metalness: 0 }),
+      new MeshStandardMaterial({ color: '#B47A44', roughness: 0.9, metalness: 0 }),
+      new MeshStandardMaterial({
+        color: '#FFF6E1',
+        roughness: 0.84,
+        metalness: 0,
+        map: flatFaceTexture,
+      }),
+      new MeshStandardMaterial({
+        color: '#7B4723',
+        roughness: 0.96,
+        metalness: 0,
+        map: roundFaceTexture,
+      }),
+      new MeshStandardMaterial({ color: '#B77B48', roughness: 0.9, metalness: 0 }),
+      new MeshStandardMaterial({ color: '#B77B48', roughness: 0.9, metalness: 0 }),
     ])
     const mesh = resourceTracker.track(new Mesh(stickGeometry, stickMaterials))
     const body = new Body({

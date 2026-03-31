@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { FINISH, createSession, createTurnState } from '@/lib/yut'
+import { FINISH, ROUTE_IDS, buildMoveCandidates, createSession, createTurnState } from '@/lib/yut'
 import { useGameStore, initialState } from '@/store/gameStore'
 import type { CouponConfig } from '@/lib/yut'
 import type { PieceState, ThrowResult } from '@/lib/yut/types'
@@ -71,32 +71,16 @@ describe('gameStore', () => {
     expect(state.moveCandidates.length).toBeGreaterThan(0)
   })
 
-  it('selectPiece exposes valid destinations for the chosen piece', () => {
+  it('selectPiece auto-resolves when the chosen piece has one destination', () => {
     useGameStore.getState().startGame()
     useGameStore.getState().startThrow(makeThrow('do', 1, false))
     useGameStore.getState().finishThrowReveal()
     useGameStore.getState().selectPiece('p1')
-    const state = useGameStore.getState()
-
-    expect(state.selectedPieceId).toBe('p1')
-    expect(state.validDestinations).toEqual([
-      {
-        stationId: 1,
-        isBranchShortcut: false,
-        isBranchContinue: false,
-      },
-    ])
-  })
-
-  it('selectDestination enters animatingMove with pending animation data', () => {
-    useGameStore.getState().startGame()
-    useGameStore.getState().startThrow(makeThrow('do', 1, false))
-    useGameStore.getState().finishThrowReveal()
-    useGameStore.getState().selectPiece('p1')
-    useGameStore.getState().selectDestination(1)
     const state = useGameStore.getState()
 
     expect(state.phase).toBe('animatingMove')
+    expect(state.selectedPieceId).toBeNull()
+    expect(state.validDestinations).toEqual([])
     expect(state.pendingAnimation).toEqual({
       pieceId: 'p1',
       fromStation: -1,
@@ -106,12 +90,102 @@ describe('gameStore', () => {
     })
   })
 
+  it('selectPiece keeps branch choices visible when multiple destinations remain', () => {
+    const pieces = [
+      makePiece('p1', 'player', 5, ROUTE_IDS.OUTER, 5),
+      makePiece('p2', 'player', -1),
+      makePiece('ai1', 'ai', -1),
+      makePiece('ai2', 'ai', FINISH),
+    ]
+    const throwResult = makeThrow('geol', 3, false)
+
+    useGameStore.setState({
+      ...initialState,
+      phase: 'selectingPiece',
+      pieces,
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [],
+      },
+      session: createSession(),
+      activeMove: throwResult,
+      moveCandidates: buildMoveCandidates(pieces, 'player', throwResult),
+    })
+
+    useGameStore.getState().selectPiece('p1')
+    const state = useGameStore.getState()
+
+    expect(state.phase).toBe('selectingPiece')
+    expect(state.selectedPieceId).toBe('p1')
+    expect(state.validDestinations).toEqual([
+      {
+        stationId: 8,
+        isBranchShortcut: false,
+        isBranchContinue: true,
+      },
+      {
+        stationId: 22,
+        isBranchShortcut: true,
+        isBranchContinue: false,
+      },
+    ])
+  })
+
+  it('selectDestination enters animatingMove with pending animation data', () => {
+    const pieces = [
+      makePiece('p1', 'player', 5, ROUTE_IDS.OUTER, 5),
+      makePiece('p2', 'player', -1),
+      makePiece('ai1', 'ai', -1),
+      makePiece('ai2', 'ai', FINISH),
+    ]
+    const throwResult = makeThrow('geol', 3, false)
+
+    useGameStore.setState({
+      ...initialState,
+      phase: 'selectingPiece',
+      pieces,
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [],
+      },
+      session: createSession(),
+      activeMove: throwResult,
+      moveCandidates: buildMoveCandidates(pieces, 'player', throwResult),
+      selectedPieceId: 'p1',
+      validDestinations: [
+        {
+          stationId: 8,
+          isBranchShortcut: false,
+          isBranchContinue: true,
+        },
+        {
+          stationId: 22,
+          isBranchShortcut: true,
+          isBranchContinue: false,
+        },
+      ],
+    })
+
+    useGameStore.getState().selectDestination(22)
+    const state = useGameStore.getState()
+
+    expect(state.phase).toBe('animatingMove')
+    expect(state.pendingAnimation).toEqual({
+      pieceId: 'p1',
+      fromStation: 5,
+      intermediateStations: [20, 21],
+      finalStation: 22,
+      capturedPieceIds: [],
+    })
+  })
+
   it('completeAnimation hands the turn to AI when no work remains', () => {
     useGameStore.getState().startGame()
     useGameStore.getState().startThrow(makeThrow('do', 1, false))
     useGameStore.getState().finishThrowReveal()
     useGameStore.getState().selectPiece('p1')
-    useGameStore.getState().selectDestination(1)
     useGameStore.getState().completeAnimation()
     const state = useGameStore.getState()
 
