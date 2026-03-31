@@ -159,10 +159,10 @@ export function findValidMoves(
 export function createInitialGameState(): GameLogicState {
   return {
     pieces: [
-      { id: 'p1', team: 'player', position: { station: HOME, routeId: '', routeIndex: -1 } },
-      { id: 'p2', team: 'player', position: { station: HOME, routeId: '', routeIndex: -1 } },
-      { id: 'ai1', team: 'ai', position: { station: HOME, routeId: '', routeIndex: -1 } },
-      { id: 'ai2', team: 'ai', position: { station: HOME, routeId: '', routeIndex: -1 } },
+      { id: 'p1', team: 'player', position: { station: HOME, routeId: '', routeIndex: -1 }, stackedPieceIds: [], stackedWith: null },
+      { id: 'p2', team: 'player', position: { station: HOME, routeId: '', routeIndex: -1 }, stackedPieceIds: [], stackedWith: null },
+      { id: 'ai1', team: 'ai', position: { station: HOME, routeId: '', routeIndex: -1 }, stackedPieceIds: [], stackedWith: null },
+      { id: 'ai2', team: 'ai', position: { station: HOME, routeId: '', routeIndex: -1 }, stackedPieceIds: [], stackedWith: null },
     ],
     turnState: createTurnState('player'),
     isGameOver: false,

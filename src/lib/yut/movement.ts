@@ -119,6 +119,8 @@ export function enterBoard(team: Team, pieceId: string, steps: number): MoveResu
       routeId: ROUTE_IDS.OUTER,
       routeIndex: 0,
     },
+    stackedPieceIds: [],
+    stackedWith: null,
   }
 
   return resolveMove(entryPiece, steps)

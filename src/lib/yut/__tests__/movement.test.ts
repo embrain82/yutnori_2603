@@ -18,6 +18,8 @@ function makePiece(routeId: string, routeIndex: number): PieceState {
     id: 'test-piece',
     team: 'player',
     position: { station, routeId, routeIndex },
+    stackedPieceIds: [],
+    stackedWith: null,
   }
 }
 
@@ -27,6 +29,8 @@ function makeHomePiece(): PieceState {
     id: 'test-piece',
     team: 'player',
     position: { station: HOME, routeId: '', routeIndex: -1 },
+    stackedPieceIds: [],
+    stackedWith: null,
   }
 }
 
@@ -36,6 +40,8 @@ function makeFinishedPiece(): PieceState {
     id: 'test-piece',
     team: 'player',
     position: { station: FINISH, routeId: '', routeIndex: -1 },
+    stackedPieceIds: [],
+    stackedWith: null,
   }
 }
 

@@ -47,6 +47,10 @@ export interface PieceState {
   id: string
   team: Team
   position: PiecePosition
+  /** IDs of pieces stacked onto this leader; empty array for solo/follower pieces */
+  stackedPieceIds: string[]
+  /** ID of the leader piece this is stacked onto; null for solo/leader pieces */
+  stackedWith: string | null
 }
 
 /** The outcome of a single yut throw */
@@ -92,4 +96,24 @@ export interface GameLogicState {
   turnState: TurnState
   isGameOver: boolean
   winner: Team | null
+}
+
+/** Result of checking for capture at a destination */
+export interface CaptureResult {
+  captured: boolean
+  capturedPieceIds: string[]
+  grantExtraThrow: boolean
+}
+
+/** Result of checking for stacking opportunity at a destination */
+export interface StackOpportunity {
+  canStack: boolean
+  targetPieceId: string | null
+}
+
+/** Complete outcome after applying a move with interaction detection */
+export interface MoveOutcome {
+  pieces: PieceState[]
+  capture: CaptureResult
+  stackOpportunity: StackOpportunity
 }
