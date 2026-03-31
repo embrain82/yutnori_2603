@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: phase_completed
-stopped_at: Completed Phase 06
-last_updated: "2026-04-01T01:18:27+09:00"
-last_activity: 2026-04-01 -- Phase 06 executed and verified; milestone implementation complete
+stopped_at: Completed quick task 260401-360
+last_updated: "2026-04-01T02:19:26+09:00"
+last_activity: 2026-04-01 -- Completed quick task 260401-360: 이동 가이드 제거 + 시작점 표시 + 단일/업힌 말 자동 이동
 progress:
   total_phases: 6
   completed_phases: 6
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 Phase: 06 (visual-polish-delight) — COMPLETE
 Plan count: 2
 Status: All roadmap phases completed for milestone v1.0
-Last activity: 2026-04-01 -- Phase 06 execution and verification completed
+Last activity: 2026-04-01 -- Completed quick task 260401-360: 이동 가이드 제거 + 시작점 표시 + 단일/업힌 말 자동 이동
 
 Progress: [██████████] 100%
 
@@ -130,8 +130,14 @@ None yet.
 - [Human Verification]: Victory confetti smoothness and defeat tone should still be checked on a real mobile device or WebView container
 - [Milestone]: Roadmap implementation is complete; the next structured step is milestone audit or packaging/shipping
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260401-360 | 이동 가이드 제거, 시작점 표시, 단일/업힌 말 자동 이동 | 2026-04-01 | 0229ad7 | [260401-360-auto-move-start-marker](./quick/260401-360-auto-move-start-marker/) |
+
 ## Session Continuity
 
 Last session: 2026-04-01T01:18:27+09:00
-Stopped at: Completed Phase 06
+Stopped at: Completed quick task 260401-360
 Resume file: None
