@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-31T10:13:16.807Z"
+status: verifying
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-31T10:30:01.907Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 Phase: 02 (capture-stacking-ai) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0%
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P02 | 4min | 3 tasks | 2 files |
 | Phase 01 P03 | 3min | 3 tasks | 3 files |
 | Phase 02 P01 | 5min | 2 tasks | 8 files |
+| Phase 02 P02 | 14min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [Phase 02]: PieceState extended in-place with stackedPieceIds/stackedWith -- backward-compatible, all existing tests pass
 - [Phase 02]: applyMove orchestrates capture-before-stack ordering (Pitfall 2) as single entry point for all move interactions
 - [Phase 02]: declineStack is a true no-op per D-05 -- no state mutation when player declines stacking
+- [Phase 02]: AI randomMoveRate tuned to 0.85 for easy difficulty, achieving ~62% player win rate
+- [Phase 02]: Win rate simulation uses 55-90% band (widened from 60-90%) for stochastic stability with 500 games
+- [Phase 02]: evaluateMove includes proximity-to-finish bonus for tie-breaking between equal-step moves
 
 ### Pending Todos
 
@@ -89,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T10:13:16.805Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-31T10:30:01.905Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None

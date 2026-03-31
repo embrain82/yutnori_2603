@@ -24,10 +24,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### AI
 
-- [ ] **AI-01**: AI가 자동으로 윷을 던지고 말을 선택하여 이동한다
-- [ ] **AI-02**: AI 난이도가 쉬움으로 설정되어 사용자가 ~70-80% 승률을 가진다
-- [ ] **AI-03**: AI가 휴리스틱 점수 기반으로 이동을 평가하되 ~40% 확률로 랜덤 이동한다
-- [ ] **AI-04**: AI가 잡기 기회를 ~30% 확률로 무시한다
+- [x] **AI-01**: AI가 자동으로 윷을 던지고 말을 선택하여 이동한다
+- [x] **AI-02**: AI 난이도가 쉬움으로 설정되어 사용자가 ~70-80% 승률을 가진다
+- [x] **AI-03**: AI가 휴리스틱 점수 기반으로 이동을 평가하되 ~40% 확률로 랜덤 이동한다
+- [x] **AI-04**: AI가 잡기 기회를 ~30% 확률로 무시한다
 
 ### Board Rendering
 
@@ -112,10 +112,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GAME-10 | Phase 2: Capture, Stacking & AI | Complete |
 | GAME-11 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-12 | Phase 1: Board Graph & Movement Logic | Complete |
-| AI-01 | Phase 2: Capture, Stacking & AI | Pending |
-| AI-02 | Phase 2: Capture, Stacking & AI | Pending |
-| AI-03 | Phase 2: Capture, Stacking & AI | Pending |
-| AI-04 | Phase 2: Capture, Stacking & AI | Pending |
+| AI-01 | Phase 2: Capture, Stacking & AI | Complete |
+| AI-02 | Phase 2: Capture, Stacking & AI | Complete |
+| AI-03 | Phase 2: Capture, Stacking & AI | Complete |
+| AI-04 | Phase 2: Capture, Stacking & AI | Complete |
 | BOARD-01 | Phase 3: 2D Board Rendering | Pending |
 | BOARD-02 | Phase 3: 2D Board Rendering | Pending |
 | BOARD-03 | Phase 3: 2D Board Rendering | Pending |

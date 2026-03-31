@@ -52,7 +52,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md -- Capture and stacking mechanics with type extensions (TDD)
-- [ ] 02-02-PLAN.md -- AI opponent with heuristic scoring, win rate validation, and barrel export (TDD)
+- [x] 02-02-PLAN.md -- AI opponent with heuristic scoring, win rate validation, and barrel export (TDD)
 
 ### Phase 3: 2D Board Rendering
 **Goal**: Users see the Yut Nori board with pieces, can select pieces to move, see valid destinations highlighted, and watch pieces animate along their path
