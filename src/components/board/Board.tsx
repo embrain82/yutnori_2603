@@ -3,17 +3,24 @@
 /**
  * Root SVG board component for the Yut Nori game.
  *
- * Renders the complete static board with layered SVG elements:
+ * Renders the complete interactive board with layered SVG elements:
  * 1. Background (diamond outline + diagonal lines)
  * 2. Station dots (29 positions)
- * 3-5. Placeholder layers for highlights, pieces, and animations (future plans)
+ * 3. Destination highlights (pulsing dots for valid moves)
+ * 4. Piece tokens (team-colored circles at station positions)
+ * 5. Animating piece (single overlay during hop animation)
  *
- * Imports STATION_COORDS to position all 29 stations in a diamond layout.
+ * Accepts optional BoardProps for interactive mode. When called with
+ * no props, renders the static board only (backward compatible with Plan 01).
  */
 
 import { STATION_COORDS, BOARD_VIEWBOX } from '@/lib/yut/boardCoords'
 import { BoardBackground } from '@/components/board/BoardBackground'
 import { Station } from '@/components/board/Station'
+import { PieceToken } from '@/components/board/PieceToken'
+import { MoveHighlight } from '@/components/board/MoveHighlight'
+import { HOME, FINISH } from '@/lib/yut/types'
+import type { PieceState } from '@/lib/yut/types'
 
 /** Corner station IDs that get larger dots */
 const CORNER_IDS = new Set([0, 5, 10, 15])
@@ -33,6 +40,42 @@ function getStationType(stationId: number): 'normal' | 'corner' | 'center' {
   return 'normal'
 }
 
+/** A valid move destination with branch type info */
+interface ValidDestination {
+  stationId: number
+  isBranchShortcut: boolean
+  isBranchContinue: boolean
+}
+
+/**
+ * Props for the interactive Board component.
+ *
+ * @param pieces - All game pieces with current positions
+ * @param selectedPieceId - ID of the currently selected piece (or null)
+ * @param validDestinations - Stations the selected piece can move to
+ * @param isAnimating - Whether a hop animation is in progress
+ * @param animatingPieceId - ID of piece currently animating (or null)
+ * @param animatingPosition - Current animated position coordinates (or null)
+ * @param onPieceSelect - Callback when a piece token is tapped
+ * @param onDestinationSelect - Callback when a destination highlight is tapped
+ */
+interface BoardProps {
+  pieces?: PieceState[]
+  selectedPieceId?: string | null
+  validDestinations?: ValidDestination[]
+  isAnimating?: boolean
+  animatingPieceId?: string | null
+  animatingPosition?: { x: number; y: number } | null
+  onPieceSelect?: (pieceId: string) => void
+  onDestinationSelect?: (stationId: number) => void
+}
+
+/**
+ * X-offset for multiple pieces sharing the same station.
+ * First piece shifts left, second shifts right.
+ */
+const STACK_OFFSET_X = [-8, 8]
+
 /**
  * Renders the complete Yut Nori game board as an SVG element.
  *
@@ -40,9 +83,45 @@ function getStationType(stationId: number): 'normal' | 'corner' | 'center' {
  * a square aspect ratio. Touch action is disabled to prevent scrolling
  * during piece interaction.
  *
+ * @param props - Optional BoardProps for interactive mode
  * @returns SVG element containing the full board visualization
  */
-export function Board(): React.JSX.Element {
+export function Board({
+  pieces = [],
+  selectedPieceId = null,
+  validDestinations = [],
+  isAnimating = false,
+  animatingPieceId = null,
+  animatingPosition = null,
+  onPieceSelect = () => {},
+  onDestinationSelect = () => {},
+}: BoardProps = {}): React.JSX.Element {
+  // Filter to on-board pieces: not HOME, not FINISH, and not stacked onto another piece
+  const onBoardPieces = pieces.filter(
+    (p) =>
+      p.position.station !== HOME &&
+      p.position.station !== FINISH &&
+      p.stackedWith === null,
+  )
+
+  // Group pieces by station for offset calculation
+  const piecesByStation = new Map<number, PieceState[]>()
+  for (const piece of onBoardPieces) {
+    const station = piece.position.station
+    const group = piecesByStation.get(station) ?? []
+    group.push(piece)
+    piecesByStation.set(station, group)
+  }
+
+  // Determine highlight type for each destination
+  const getHighlightType = (dest: ValidDestination): 'continue' | 'shortcut' => {
+    if (dest.isBranchShortcut) return 'shortcut'
+    return 'continue'
+  }
+
+  // Should we show interactive elements?
+  const showInteraction = !isAnimating
+
   return (
     <svg
       viewBox={BOARD_VIEWBOX}
@@ -70,11 +149,76 @@ export function Board(): React.JSX.Element {
         })}
       </g>
 
-      {/* Layer 3: Destination highlights (future -- Plan 03-02) */}
+      {/* Layer 3: Destination highlights -- only when a piece is selected and not animating */}
+      {showInteraction && selectedPieceId !== null && (
+        <g>
+          {validDestinations.map((dest) => {
+            const coord = STATION_COORDS[dest.stationId]
+            if (!coord) return null
+            return (
+              <MoveHighlight
+                key={`highlight-${dest.stationId}`}
+                cx={coord.x}
+                cy={coord.y}
+                type={getHighlightType(dest)}
+                onSelect={() => onDestinationSelect(dest.stationId)}
+              />
+            )
+          })}
+        </g>
+      )}
 
-      {/* Layer 4: Piece tokens (future -- Plan 03-02) */}
+      {/* Layer 4: Piece tokens -- on-board pieces at station positions */}
+      <g>
+        {onBoardPieces.map((piece) => {
+          // Skip the animating piece in the static layer
+          if (piece.id === animatingPieceId) return null
 
-      {/* Layer 5: Animating piece (future -- Plan 03-03) */}
+          const coord = STATION_COORDS[piece.position.station]
+          if (!coord) return null
+
+          // Calculate offset for multiple pieces at same station
+          const group = piecesByStation.get(piece.position.station) ?? []
+          const indexInGroup = group.indexOf(piece)
+          const offsetX = group.length > 1 ? (STACK_OFFSET_X[indexInGroup] ?? 0) : 0
+
+          const stackCount = 1 + piece.stackedPieceIds.length
+
+          return (
+            <PieceToken
+              key={piece.id}
+              cx={coord.x + offsetX}
+              cy={coord.y}
+              team={piece.team}
+              stackCount={stackCount}
+              isSelectable={showInteraction}
+              isSelected={piece.id === selectedPieceId}
+              onSelect={() => onPieceSelect(piece.id)}
+            />
+          )
+        })}
+      </g>
+
+      {/* Layer 5: Animating piece -- single overlay during hop animation */}
+      {animatingPieceId !== null && animatingPosition !== null && (
+        <g data-testid="animating-piece">
+          {(() => {
+            const piece = pieces.find((p) => p.id === animatingPieceId)
+            if (!piece) return null
+            return (
+              <PieceToken
+                cx={animatingPosition.x}
+                cy={animatingPosition.y}
+                team={piece.team}
+                stackCount={1 + piece.stackedPieceIds.length}
+                isSelectable={false}
+                isSelected={false}
+                onSelect={() => {}}
+              />
+            )
+          })()}
+        </g>
+      )}
     </svg>
   )
 }

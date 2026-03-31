@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { render } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, fireEvent } from '@testing-library/react'
 import { Board } from '@/components/board/Board'
+import { MoveHighlight } from '@/components/board/MoveHighlight'
+import type { PieceState } from '@/lib/yut/types'
 
 describe('Board', () => {
   it('renders SVG with viewBox 0 0 500 500', () => {
@@ -52,5 +54,169 @@ describe('Board', () => {
     const polygon = container.querySelector('polygon')
     expect(polygon).not.toBeNull()
     expect(polygon!.getAttribute('fill')).toBe('#FFFDE7')
+  })
+})
+
+// Helper to create a PieceState for testing
+function makePiece(
+  id: string,
+  team: 'player' | 'ai',
+  station: number,
+  routeId = 'outer',
+  routeIndex = 0,
+): PieceState {
+  return {
+    id,
+    team,
+    position: { station, routeId, routeIndex },
+    stackedPieceIds: [],
+    stackedWith: null,
+  }
+}
+
+describe('MoveHighlight', () => {
+  it('renders pulsing circle at given coordinates with gold color by default', () => {
+    const { getByTestId } = render(
+      <svg>
+        <MoveHighlight cx={100} cy={200} type="continue" onSelect={() => {}} />
+      </svg>,
+    )
+    const dot = getByTestId('move-highlight-continue')
+    expect(dot).toBeTruthy()
+    expect(dot.getAttribute('fill')).toBe('rgba(255, 215, 0, 0.4)')
+    expect(dot.getAttribute('stroke')).toBe('#FFD700')
+  })
+
+  it('renders green color when type is shortcut', () => {
+    const { getByTestId } = render(
+      <svg>
+        <MoveHighlight cx={100} cy={200} type="shortcut" onSelect={() => {}} />
+      </svg>,
+    )
+    const dot = getByTestId('move-highlight-shortcut')
+    expect(dot).toBeTruthy()
+    expect(dot.getAttribute('fill')).toBe('rgba(102, 187, 106, 0.4)')
+    expect(dot.getAttribute('stroke')).toBe('#66BB6A')
+  })
+
+  it('calls onSelect when clicked', () => {
+    const onSelect = vi.fn()
+    const { getByTestId } = render(
+      <svg>
+        <MoveHighlight cx={100} cy={200} type="continue" onSelect={onSelect} />
+      </svg>,
+    )
+    fireEvent.click(getByTestId('highlight-hit-area'))
+    expect(onSelect).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('Board with props', () => {
+  const defaultProps = {
+    pieces: [] as PieceState[],
+    selectedPieceId: null,
+    validDestinations: [] as Array<{
+      stationId: number
+      isBranchShortcut: boolean
+      isBranchContinue: boolean
+    }>,
+    isAnimating: false,
+    animatingPieceId: null,
+    animatingPosition: null,
+    onPieceSelect: vi.fn(),
+    onDestinationSelect: vi.fn(),
+  }
+
+  it('renders PieceToken for each on-board piece (not HOME or FINISH)', () => {
+    const pieces: PieceState[] = [
+      makePiece('p1', 'player', 3, 'outer', 3),
+      makePiece('p2', 'ai', 8, 'outer', 8),
+      makePiece('p3', 'player', -1), // HOME -- should NOT render
+      makePiece('p4', 'ai', -2),     // FINISH -- should NOT render
+    ]
+    const { container } = render(
+      <Board {...defaultProps} pieces={pieces} />,
+    )
+    const tokens = container.querySelectorAll('[data-testid="piece-token"]')
+    expect(tokens).toHaveLength(2)
+  })
+
+  it('renders MoveHighlight for each valid destination when a piece is selected', () => {
+    const pieces = [makePiece('p1', 'player', 3, 'outer', 3)]
+    const validDestinations = [
+      { stationId: 5, isBranchShortcut: false, isBranchContinue: false },
+      { stationId: 7, isBranchShortcut: false, isBranchContinue: false },
+    ]
+    const { container } = render(
+      <Board
+        {...defaultProps}
+        pieces={pieces}
+        selectedPieceId="p1"
+        validDestinations={validDestinations}
+      />,
+    )
+    const highlights = container.querySelectorAll('[data-testid^="move-highlight"]')
+    expect(highlights).toHaveLength(2)
+  })
+
+  it('does not render highlights when no piece is selected', () => {
+    const pieces = [makePiece('p1', 'player', 3, 'outer', 3)]
+    const validDestinations = [
+      { stationId: 5, isBranchShortcut: false, isBranchContinue: false },
+    ]
+    const { container } = render(
+      <Board
+        {...defaultProps}
+        pieces={pieces}
+        selectedPieceId={null}
+        validDestinations={validDestinations}
+      />,
+    )
+    const highlights = container.querySelectorAll('[data-testid^="move-highlight"]')
+    expect(highlights).toHaveLength(0)
+  })
+
+  it('renders branch highlights with two colors -- gold for continue, green for shortcut (D-10)', () => {
+    const pieces = [makePiece('p1', 'player', 3, 'outer', 3)]
+    const validDestinations = [
+      { stationId: 6, isBranchShortcut: false, isBranchContinue: true },
+      { stationId: 20, isBranchShortcut: true, isBranchContinue: false },
+    ]
+    const { container } = render(
+      <Board
+        {...defaultProps}
+        pieces={pieces}
+        selectedPieceId="p1"
+        validDestinations={validDestinations}
+      />,
+    )
+    const gold = container.querySelector('[data-testid="move-highlight-continue"]')
+    const green = container.querySelector('[data-testid="move-highlight-shortcut"]')
+    expect(gold).toBeTruthy()
+    expect(green).toBeTruthy()
+    expect(gold!.getAttribute('fill')).toBe('rgba(255, 215, 0, 0.4)')
+    expect(green!.getAttribute('fill')).toBe('rgba(102, 187, 106, 0.4)')
+  })
+
+  it('does not render interaction elements when isAnimating is true', () => {
+    const pieces = [makePiece('p1', 'player', 3, 'outer', 3)]
+    const validDestinations = [
+      { stationId: 5, isBranchShortcut: false, isBranchContinue: false },
+    ]
+    const { container } = render(
+      <Board
+        {...defaultProps}
+        pieces={pieces}
+        selectedPieceId="p1"
+        validDestinations={validDestinations}
+        isAnimating={true}
+      />,
+    )
+    // No highlights during animation
+    const highlights = container.querySelectorAll('[data-testid^="move-highlight"]')
+    expect(highlights).toHaveLength(0)
+    // No selectable hit areas during animation
+    const hitAreas = container.querySelectorAll('[data-testid="piece-hit-area"]')
+    expect(hitAreas).toHaveLength(0)
   })
 })
