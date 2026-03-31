@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-31T09:32:15.316Z"
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-31T10:13:16.807Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 0
 ---
 
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** 사용자가 윷을 던져서 3D 물리 효과로 결과를 보고, 말을 움직이며 AI와 윷놀이 대결을 즐기는 경험
-**Current focus:** Phase 01 — board-graph-movement-logic
+**Current focus:** Phase 02 — capture-stacking-ai
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 02 (capture-stacking-ai) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
 Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0%
@@ -55,6 +55,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P01 | 4min | 2 tasks | 18 files |
 | Phase 01 P02 | 4min | 3 tasks | 2 files |
 | Phase 01 P03 | 3min | 3 tasks | 3 files |
+| Phase 02 P01 | 5min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Diagonal/center routes finish immediately on any step beyond last station (no D-07 exception); only outer route has finish-line landing semantics
 - [Phase 01]: Branch detection restricted to outer route only -- pieces on shortcut routes skip branch check at S5/S10
 - [Phase 01]: processThrow uses decrement-then-increment: throwsRemaining-1 + (grantsExtra ? 1 : 0) for correct yut/mo chaining
+- [Phase 02]: PieceState extended in-place with stackedPieceIds/stackedWith -- backward-compatible, all existing tests pass
+- [Phase 02]: applyMove orchestrates capture-before-stack ordering (Pitfall 2) as single entry point for all move interactions
+- [Phase 02]: declineStack is a true no-op per D-05 -- no state mutation when player declines stacking
 
 ### Pending Todos
 
@@ -85,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T09:32:15.314Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-capture-stacking-ai/02-CONTEXT.md
+Last session: 2026-03-31T10:13:16.805Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None

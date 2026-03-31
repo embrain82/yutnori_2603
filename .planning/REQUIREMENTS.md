@@ -15,10 +15,10 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **GAME-04**: 29칸 윷판 경로 그래프가 외곽 20칸 + 지름길 9칸으로 구성된다
 - [x] **GAME-05**: 코너 위치(모/앞밭, 뒷모 등)에서 지름길 진입 여부를 선택할 수 있다
 - [x] **GAME-06**: 말이 윷 결과 수만큼 경로를 따라 정확히 이동한다
-- [ ] **GAME-07**: 상대 말 위치에 도착하면 잡기가 실행되고 추가 턴이 부여된다
-- [ ] **GAME-08**: 내 말 위치에 도착 시 엎을지(스택) 선택할 수 있다
-- [ ] **GAME-09**: 엎힌 말은 하나의 그룹으로 함께 이동한다
-- [ ] **GAME-10**: 엎힌 그룹이 잡히면 모든 말이 개별적으로 출발점으로 돌아간다
+- [x] **GAME-07**: 상대 말 위치에 도착하면 잡기가 실행되고 추가 턴이 부여된다
+- [x] **GAME-08**: 내 말 위치에 도착 시 엎을지(스택) 선택할 수 있다
+- [x] **GAME-09**: 엎힌 말은 하나의 그룹으로 함께 이동한다
+- [x] **GAME-10**: 엎힌 그룹이 잡히면 모든 말이 개별적으로 출발점으로 돌아간다
 - [x] **GAME-11**: 2개 말이 모두 참먹이를 통과하면 승리한다 (정확히 도착은 통과 아님)
 - [x] **GAME-12**: 이동 불가능한 던지기 결과는 자동으로 건너뛴다
 
@@ -106,10 +106,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GAME-04 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-05 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-06 | Phase 1: Board Graph & Movement Logic | Complete |
-| GAME-07 | Phase 2: Capture, Stacking & AI | Pending |
-| GAME-08 | Phase 2: Capture, Stacking & AI | Pending |
-| GAME-09 | Phase 2: Capture, Stacking & AI | Pending |
-| GAME-10 | Phase 2: Capture, Stacking & AI | Pending |
+| GAME-07 | Phase 2: Capture, Stacking & AI | Complete |
+| GAME-08 | Phase 2: Capture, Stacking & AI | Complete |
+| GAME-09 | Phase 2: Capture, Stacking & AI | Complete |
+| GAME-10 | Phase 2: Capture, Stacking & AI | Complete |
 | GAME-11 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-12 | Phase 1: Board Graph & Movement Logic | Complete |
 | AI-01 | Phase 2: Capture, Stacking & AI | Pending |
