@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: phase_completed
-stopped_at: Completed quick task 260401-360
-last_updated: "2026-04-01T02:19:26+09:00"
-last_activity: 2026-04-01 -- Completed quick task 260401-360: 이동 가이드 제거 + 시작점 표시 + 단일/업힌 말 자동 이동
+stopped_at: Completed quick task 260401-3fv
+last_updated: "2026-04-01T02:28:38+09:00"
+last_activity: 2026-04-01 -- Completed quick task 260401-3fv: 출발 마커 위치 조정 + 턴 전환 중복 방지 + HOME 자동 이동
 progress:
   total_phases: 6
   completed_phases: 6
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 Phase: 06 (visual-polish-delight) — COMPLETE
 Plan count: 2
 Status: All roadmap phases completed for milestone v1.0
-Last activity: 2026-04-01 -- Completed quick task 260401-360: 이동 가이드 제거 + 시작점 표시 + 단일/업힌 말 자동 이동
+Last activity: 2026-04-01 -- Completed quick task 260401-3fv: 출발 마커 위치 조정 + 턴 전환 중복 방지 + HOME 자동 이동
 
 Progress: [██████████] 100%
 
@@ -135,9 +135,10 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260401-360 | 이동 가이드 제거, 시작점 표시, 단일/업힌 말 자동 이동 | 2026-04-01 | 0229ad7 | [260401-360-auto-move-start-marker](./quick/260401-360-auto-move-start-marker/) |
+| 260401-3fv | 출발 글자 위치 이동, 턴 전환 중복 방지, HOME 자동 이동 | 2026-04-01 | 3b4973b | [260401-3fv-home](./quick/260401-3fv-home/) |
 
 ## Session Continuity
 
 Last session: 2026-04-01T01:18:27+09:00
-Stopped at: Completed quick task 260401-360
+Stopped at: Completed quick task 260401-3fv
 Resume file: None
