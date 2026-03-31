@@ -10,7 +10,7 @@
  * Imports only from ./types and ./board -- zero rendering dependencies.
  */
 import { HOME, FINISH } from '@/lib/yut/types'
-import type { PieceState, PiecePosition, MoveResult, Team } from '@/lib/yut/types'
+import type { PieceState, MoveResult, Team } from '@/lib/yut/types'
 import { ROUTES, ROUTE_IDS, BRANCH_POINTS } from '@/lib/yut/board'
 
 /**
