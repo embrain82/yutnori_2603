@@ -12,7 +12,7 @@ import { YutThrowOverlay } from '@/components/throw/YutThrowOverlay'
 import { shakeBoard, useHopAnimation } from '@/hooks/useHopAnimation'
 import { BOARD_VIEWBOX, STATION_COORDS } from '@/lib/yut/boardCoords'
 import { generateThrow } from '@/lib/yut/throw'
-import { FINISH, HOME } from '@/lib/yut/types'
+import { HOME } from '@/lib/yut/types'
 import { useGameStore } from '@/store/gameStore'
 
 const ENTRY_STATION = 0
@@ -23,80 +23,6 @@ interface ImpactEffect {
   kind: 'capture' | 'stack'
   label: string
   stationId: number
-}
-
-function formatStationLabel(stationId: number): string {
-  if (stationId === HOME) {
-    return 'HOME'
-  }
-
-  if (stationId === FINISH) {
-    return '완주'
-  }
-
-  if (stationId === ENTRY_STATION) {
-    return '입구 S0'
-  }
-
-  if (stationId === 22) {
-    return '중앙 S22'
-  }
-
-  return `S${stationId}`
-}
-
-function MoveGuideMarker({
-  x,
-  y,
-  badge,
-  label,
-  tone,
-}: {
-  x: number
-  y: number
-  badge: string
-  label: string
-  tone: 'start' | 'end'
-}): React.JSX.Element {
-  const palette = tone === 'start'
-    ? {
-        fill: 'rgba(255, 244, 218, 0.92)',
-        inner: 'rgba(160, 106, 42, 0.18)',
-        stroke: '#A06A2A',
-        text: '#6E4B21',
-      }
-    : {
-        fill: 'rgba(235, 255, 229, 0.95)',
-        inner: 'rgba(76, 175, 80, 0.18)',
-        stroke: '#2E7D32',
-        text: '#1B5E20',
-      }
-
-  return (
-    <g transform={`translate(${x} ${y})`} data-testid={`move-guide-${tone}`}>
-      <circle r={20} fill={palette.fill} stroke={palette.stroke} strokeWidth={2.5} />
-      <circle r={12} fill={palette.inner} stroke={palette.stroke} strokeWidth={1.5} />
-      <rect x={-25} y={-42} width={50} height={18} rx={9} fill="rgba(255,255,255,0.94)" />
-      <text
-        y={-29}
-        textAnchor="middle"
-        fontSize={10}
-        fontWeight={700}
-        fill={palette.text}
-      >
-        {badge}
-      </text>
-      <text
-        y={37}
-        textAnchor="middle"
-        fontSize={11}
-        fontWeight={700}
-        fill={palette.text}
-      >
-        {label}
-      </text>
-    </g>
-  )
 }
 
 function ImpactBadge({
@@ -216,8 +142,6 @@ export function PlayScreen(): React.JSX.Element {
     ...(activeMove ? [activeMove] : []),
     ...visiblePendingResults,
   ]
-  const sourceLabel = pendingAnimation ? formatStationLabel(pendingAnimation.fromStation) : null
-  const destinationLabel = pendingAnimation ? formatStationLabel(pendingAnimation.finalStation) : null
 
   useEffect(() => {
     if (phase !== 'animatingMove' || !pendingAnimation) {
@@ -365,26 +289,6 @@ export function PlayScreen(): React.JSX.Element {
                   onSelect={() => {}}
                 />
               </g>
-
-              {startCoord && sourceLabel ? (
-                <MoveGuideMarker
-                  x={startCoord.x}
-                  y={startCoord.y}
-                  badge="출발"
-                  label={sourceLabel}
-                  tone="start"
-                />
-              ) : null}
-
-              {destinationCoord && destinationLabel ? (
-                <MoveGuideMarker
-                  x={destinationCoord.x}
-                  y={destinationCoord.y}
-                  badge="도착"
-                  label={destinationLabel}
-                  tone="end"
-                />
-              ) : null}
 
               <AnimatePresence>
                 {impactEffect && destinationCoord ? (

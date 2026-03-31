@@ -79,6 +79,8 @@ const STACK_OFFSET_X = [-8, 8]
 const BOARD_PRESENTATION_CLASS_NAME =
   'w-full max-w-[500px] aspect-square overflow-visible drop-shadow-[0_18px_28px_rgba(114,72,23,0.14)]'
 
+const START_STATION_ID = 0
+
 /**
  * Renders the complete Yut Nori game board as an SVG element.
  *
@@ -99,6 +101,8 @@ export function Board({
   onPieceSelect = () => {},
   onDestinationSelect = () => {},
 }: BoardProps = {}): React.JSX.Element {
+  const startCoord = STATION_COORDS[START_STATION_ID]
+
   // Filter to on-board pieces: not HOME, not FINISH, and not stacked onto another piece
   const onBoardPieces = pieces.filter(
     (p) =>
@@ -151,6 +155,37 @@ export function Board({
             />
           )
         })}
+      </g>
+
+      <g data-testid="board-start-marker" aria-label="말 출발점">
+        <circle
+          cx={startCoord.x}
+          cy={startCoord.y}
+          r={16}
+          fill="rgba(255, 236, 179, 0.78)"
+          stroke="#A06A2A"
+          strokeWidth={2}
+        />
+        <rect
+          x={startCoord.x + 16}
+          y={startCoord.y - 36}
+          width={46}
+          height={20}
+          rx={10}
+          fill="rgba(255, 250, 240, 0.96)"
+          stroke="#A06A2A"
+          strokeWidth={1.5}
+        />
+        <text
+          x={startCoord.x + 39}
+          y={startCoord.y - 22}
+          textAnchor="middle"
+          fontSize={11}
+          fontWeight={800}
+          fill="#6E4B21"
+        >
+          출발
+        </text>
       </g>
 
       {/* Layer 3: Destination highlights -- only when a piece is selected and not animating */}

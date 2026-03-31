@@ -148,6 +148,18 @@ function clearMoveSelection(): Pick<
   }
 }
 
+function findAutoSelectablePieceId(candidates: MoveCandidate[]): string | null {
+  const uniquePieceIds = Array.from(
+    new Set(candidates.map((candidate) => candidate.pieceId))
+  )
+
+  if (uniquePieceIds.length !== 1) {
+    return null
+  }
+
+  return uniquePieceIds[0]
+}
+
 function ensureTurnRecord(record: TurnRecord | null, team: Team): TurnRecord {
   if (record && record.team === team) {
     return record
@@ -360,6 +372,40 @@ function prepareNextPlayableState(
           aiCandidate
         ),
       }
+    }
+  }
+
+  const autoSelectablePieceId = findAutoSelectablePieceId(nextPlayable.moveCandidates)
+  if (autoSelectablePieceId) {
+    const pieceCandidates = nextPlayable.moveCandidates.filter(
+      (candidate) => candidate.pieceId === autoSelectablePieceId
+    )
+    const preparedState = {
+      ...state,
+      turnState: nextPlayable.turnState,
+      activeMove: nextPlayable.activeMove,
+      moveCandidates: nextPlayable.moveCandidates,
+    }
+
+    if (pieceCandidates.length === 1) {
+      return {
+        turnState: nextPlayable.turnState,
+        activeMove: nextPlayable.activeMove,
+        moveCandidates: nextPlayable.moveCandidates,
+        ...beginCandidateResolution(preparedState, pieceCandidates[0]),
+      }
+    }
+
+    return {
+      phase: 'selectingPiece',
+      turnState: nextPlayable.turnState,
+      pendingAnimation: null,
+      pendingStack: null,
+      pendingMoveRecord: null,
+      activeMove: nextPlayable.activeMove,
+      moveCandidates: nextPlayable.moveCandidates,
+      selectedPieceId: autoSelectablePieceId,
+      validDestinations: mapDestinations(pieceCandidates),
     }
   }
 

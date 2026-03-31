@@ -71,6 +71,93 @@ describe('gameStore', () => {
     expect(state.moveCandidates.length).toBeGreaterThan(0)
   })
 
+  it('finishThrowReveal auto-moves when only one player piece can still move', () => {
+    useGameStore.setState({
+      ...initialState,
+      phase: 'throwing',
+      pieces: [
+        makePiece('p1', 'player', FINISH),
+        makePiece('p2', 'player', -1),
+        makePiece('ai1', 'ai', -1),
+        makePiece('ai2', 'ai', -1),
+      ],
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [makeThrow('do', 1, false)],
+      },
+      activeThrow: makeThrow('do', 1, false),
+      session: createSession(),
+      currentTurnRecord: {
+        team: 'player',
+        throws: [makeThrow('do', 1, false)],
+        moves: [],
+      },
+    })
+
+    useGameStore.getState().finishThrowReveal()
+    const state = useGameStore.getState()
+
+    expect(state.phase).toBe('animatingMove')
+    expect(state.selectedPieceId).toBeNull()
+    expect(state.pendingAnimation).toEqual({
+      pieceId: 'p2',
+      fromStation: -1,
+      intermediateStations: [],
+      finalStation: 1,
+      capturedPieceIds: [],
+    })
+  })
+
+  it('finishThrowReveal preselects the stacked leader when it is the only movable piece', () => {
+    const leader = makePiece('p1', 'player', 5, ROUTE_IDS.OUTER, 5)
+    leader.stackedPieceIds = ['p2']
+
+    const follower = makePiece('p2', 'player', 5, ROUTE_IDS.OUTER, 5)
+    follower.stackedWith = 'p1'
+
+    useGameStore.setState({
+      ...initialState,
+      phase: 'throwing',
+      pieces: [
+        leader,
+        follower,
+        makePiece('ai1', 'ai', -1),
+        makePiece('ai2', 'ai', FINISH),
+      ],
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [makeThrow('geol', 3, false)],
+      },
+      activeThrow: makeThrow('geol', 3, false),
+      session: createSession(),
+      currentTurnRecord: {
+        team: 'player',
+        throws: [makeThrow('geol', 3, false)],
+        moves: [],
+      },
+    })
+
+    useGameStore.getState().finishThrowReveal()
+    const state = useGameStore.getState()
+
+    expect(state.phase).toBe('selectingPiece')
+    expect(state.selectedPieceId).toBe('p1')
+    expect(state.validDestinations).toEqual([
+      {
+        stationId: 8,
+        isBranchShortcut: false,
+        isBranchContinue: true,
+      },
+      {
+        stationId: 22,
+        isBranchShortcut: true,
+        isBranchContinue: false,
+      },
+    ])
+  })
+
   it('selectPiece auto-resolves when the chosen piece has one destination', () => {
     useGameStore.getState().startGame()
     useGameStore.getState().startThrow(makeThrow('do', 1, false))

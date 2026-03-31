@@ -55,6 +55,13 @@ describe('Board', () => {
     expect(polygon).not.toBeNull()
     expect(polygon!.getAttribute('fill')).toBe('#FFFDE7')
   })
+
+  it('renders a persistent start marker on the board entry station', () => {
+    const { getByTestId, getByText } = render(<Board />)
+
+    expect(getByTestId('board-start-marker')).toBeInTheDocument()
+    expect(getByText('출발')).toBeInTheDocument()
+  })
 })
 
 // Helper to create a PieceState for testing

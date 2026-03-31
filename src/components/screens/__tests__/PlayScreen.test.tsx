@@ -189,7 +189,7 @@ describe('PlayScreen', () => {
     expect(screen.queryByText('개')).toBeNull()
   })
 
-  it('keeps route guidance inside the board overlay while a piece is animating', () => {
+  it('does not render move guide markers while a piece is animating', () => {
     storeState = {
       ...storeState,
       phase: 'animatingMove',
@@ -214,10 +214,8 @@ describe('PlayScreen', () => {
     render(<PlayScreen />)
 
     expect(screen.queryByTestId('move-route-panel')).toBeNull()
-    expect(screen.getByTestId('move-guide-start')).toBeInTheDocument()
-    expect(screen.getByTestId('move-guide-end')).toBeInTheDocument()
-    expect(screen.getAllByText('HOME').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('S5').length).toBeGreaterThan(0)
+    expect(screen.queryByTestId('move-guide-start')).toBeNull()
+    expect(screen.queryByTestId('move-guide-end')).toBeNull()
   })
 
   it('shows a capture effect badge after the hop resolves', async () => {
