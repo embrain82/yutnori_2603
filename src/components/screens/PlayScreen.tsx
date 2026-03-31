@@ -322,30 +322,6 @@ export function PlayScreen(): React.JSX.Element {
           )}
         </div>
 
-        {pendingAnimation && sourceLabel && destinationLabel ? (
-          <div
-            data-testid="move-route-panel"
-            className="grid gap-2 rounded-[26px] bg-[#FFF7E2] px-4 py-3 text-[#6E4B21] shadow-[0_14px_30px_rgba(120,75,24,0.08)] sm:grid-cols-2"
-          >
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A06A2A]">
-                이동 경로
-              </p>
-              <p className="mt-1 text-sm font-medium">말이 이동하는 동안 출발지와 도착지를 표시합니다.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-sm font-semibold">
-              <div className="rounded-[18px] bg-white/82 px-3 py-2">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#A06A2A]">출발</p>
-                <p className="mt-1 text-base text-[#1A1A2E]">{sourceLabel}</p>
-              </div>
-              <div className="rounded-[18px] bg-[#F2FFE9] px-3 py-2">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-[#4A8C30]">도착</p>
-                <p className="mt-1 text-base text-[#1B5E20]">{destinationLabel}</p>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
         <HomeZone
           playerHomePieces={playerHomePieces}
           aiHomePieces={aiHomePieces}

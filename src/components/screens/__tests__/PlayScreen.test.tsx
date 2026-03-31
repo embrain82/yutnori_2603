@@ -189,7 +189,7 @@ describe('PlayScreen', () => {
     expect(screen.queryByText('개')).toBeNull()
   })
 
-  it('shows the move route summary while a piece is animating', () => {
+  it('keeps route guidance inside the board overlay while a piece is animating', () => {
     storeState = {
       ...storeState,
       phase: 'animatingMove',
@@ -213,7 +213,9 @@ describe('PlayScreen', () => {
 
     render(<PlayScreen />)
 
-    expect(screen.getByTestId('move-route-panel')).toBeInTheDocument()
+    expect(screen.queryByTestId('move-route-panel')).toBeNull()
+    expect(screen.getByTestId('move-guide-start')).toBeInTheDocument()
+    expect(screen.getByTestId('move-guide-end')).toBeInTheDocument()
     expect(screen.getAllByText('HOME').length).toBeGreaterThan(0)
     expect(screen.getAllByText('S5').length).toBeGreaterThan(0)
   })
