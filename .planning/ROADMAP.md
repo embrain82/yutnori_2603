@@ -64,13 +64,13 @@ Plans:
   3. Tapping a piece highlights all valid destination positions for available throw results
   4. At corner positions, the shortcut vs outer path choice is visually distinct and selectable
   5. Moving a piece plays a hop animation that follows the actual board path step by step
-**Plans**: TBD
+**Plans:** 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md -- Board coordinate mapping (TDD) + static SVG board with 29 stations
+- [ ] 03-02-PLAN.md -- Piece tokens with team colors, stack badges, and HOME zone
+- [ ] 03-03-PLAN.md -- Interaction wiring: selection highlights, branch choice, hop animation
 
 ### Phase 4: 3D Yut Throwing
 **Goal**: Users tap a throw button and watch four yut sticks tumble through a 3D physics simulation, landing to reveal the predetermined result
@@ -132,8 +132,8 @@ Note: Phase 3 and Phase 4 can run in parallel (different dependency chains).
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Board Graph & Movement Logic | 3/3 | Complete | 2026-03-31 |
-| 2. Capture, Stacking & AI | 0/2 | Planning complete | - |
-| 3. 2D Board Rendering | 0/3 | Not started | - |
+| 2. Capture, Stacking & AI | 2/2 | Complete | 2026-03-31 |
+| 3. 2D Board Rendering | 0/3 | Planning complete | - |
 | 4. 3D Yut Throwing | 0/3 | Not started | - |
 | 5. Game Screens & Integration | 0/3 | Not started | - |
 | 6. Visual Polish & Delight | 0/2 | Not started | - |
