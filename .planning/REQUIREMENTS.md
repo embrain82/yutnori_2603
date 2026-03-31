@@ -34,9 +34,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **BOARD-01**: 전통 윷판 레이아웃이 2D(SVG/HTML)로 렌더링된다
 - [x] **BOARD-02**: 각 팀의 말 위치가 시각적으로 구분되어 표시된다
 - [x] **BOARD-03**: 엎힌(스택) 말이 시각적으로 표현된다 (겹침 또는 카운트)
-- [ ] **BOARD-04**: 말 선택 시 이동 가능한 목적지가 하이라이트된다
-- [ ] **BOARD-05**: 코너에서 지름길/외곽 경로 선택지가 시각적으로 구분된다
-- [ ] **BOARD-06**: 말 이동 시 경로를 따라 hop 애니메이션이 재생된다
+- [x] **BOARD-04**: 말 선택 시 이동 가능한 목적지가 하이라이트된다
+- [x] **BOARD-05**: 코너에서 지름길/외곽 경로 선택지가 시각적으로 구분된다
+- [x] **BOARD-06**: 말 이동 시 경로를 따라 hop 애니메이션이 재생된다
 
 ### 3D Yut Throwing
 
@@ -119,9 +119,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BOARD-01 | Phase 3: 2D Board Rendering | Complete |
 | BOARD-02 | Phase 3: 2D Board Rendering | Complete |
 | BOARD-03 | Phase 3: 2D Board Rendering | Complete |
-| BOARD-04 | Phase 3: 2D Board Rendering | Pending |
-| BOARD-05 | Phase 3: 2D Board Rendering | Pending |
-| BOARD-06 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-04 | Phase 3: 2D Board Rendering | Complete |
+| BOARD-05 | Phase 3: 2D Board Rendering | Complete |
+| BOARD-06 | Phase 3: 2D Board Rendering | Complete |
 | THROW-01 | Phase 4: 3D Yut Throwing | Pending |
 | THROW-02 | Phase 4: 3D Yut Throwing | Pending |
 | THROW-03 | Phase 4: 3D Yut Throwing | Pending |
