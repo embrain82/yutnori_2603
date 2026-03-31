@@ -137,7 +137,10 @@ export function findValidMoves(
 ): MoveOption[] {
   const teamPieces = pieces.filter((p) => p.team === team)
 
-  return teamPieces.map((piece) => {
+  // Filter out stacked followers -- only leaders and solo pieces can move independently (D-06)
+  const movablePieces = teamPieces.filter((p) => p.stackedWith === null)
+
+  return movablePieces.map((piece) => {
     const { canMove } = getAvailableMoves(piece, throwResult.steps)
 
     return {
