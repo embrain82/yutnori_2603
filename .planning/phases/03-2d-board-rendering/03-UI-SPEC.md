@@ -52,13 +52,11 @@ Exceptions: SVG internal coordinates use a 500x500 viewBox with its own coordina
 | Body | 14px | 400 (regular) | 1.5 |
 | Label | 12px | 600 (semibold) | 1.2 |
 | Heading | 20px | 600 (semibold) | 1.2 |
-| Display | 28px | 700 (bold) | 1.1 |
 
 **Usage in this phase:**
-- **Body:** Not used in board SVG; reserved for future info panel text
+- **Body:** Not used in board SVG; part of the project-wide type scale for future info panel text
 - **Label:** Stack count badge text inside SVG (rendered as SVG `<text>` at fontSize 10 in viewBox units, which maps to ~12px at typical display size). Also used for HOME zone piece count labels.
 - **Heading:** Throw result display text (e.g., "do", "yut") shown above or beside the board
-- **Display:** Not used this phase; reserved for Phase 5 turn indicators
 
 **SVG text sizing note:** SVG text uses viewBox-relative units. At a 500px viewBox displayed in a ~375px mobile container, 1 viewBox unit = ~0.75 physical px. Stack badge text at fontSize 10 (viewBox) = ~7.5px physical, which is acceptable for a 1-2 digit number badge. If readability is an issue, increase to fontSize 12.
 
