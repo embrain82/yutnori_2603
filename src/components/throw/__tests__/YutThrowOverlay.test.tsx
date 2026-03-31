@@ -103,7 +103,13 @@ describe('YutThrowOverlay', () => {
     render(<YutThrowOverlay open result={result} onComplete={onComplete} />)
 
     act(() => {
-      vi.advanceTimersByTime(700)
+      vi.advanceTimersByTime(349)
+    })
+
+    expect(onComplete).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(1)
     })
 
     expect(onComplete).toHaveBeenCalledTimes(1)

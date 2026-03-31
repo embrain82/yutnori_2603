@@ -11,6 +11,8 @@ interface YutThrowOverlayProps {
   onComplete: () => void
 }
 
+const THROW_REVEAL_COMPLETE_DELAY_MS = 350
+
 export function YutThrowOverlay({
   open,
   result,
@@ -40,7 +42,7 @@ export function YutThrowOverlay({
 
     const timerId = window.setTimeout(() => {
       onComplete()
-    }, 700)
+    }, THROW_REVEAL_COMPLETE_DELAY_MS)
 
     return () => {
       window.clearTimeout(timerId)

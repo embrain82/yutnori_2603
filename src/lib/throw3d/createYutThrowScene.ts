@@ -57,9 +57,9 @@ const SLOT_X_POSITIONS = [-1.8, -0.6, 0.6, 1.8] as const
 const SPAWN_Y_POSITIONS = [1.8, 2, 2.2, 2.4] as const
 const SPAWN_Z_POSITIONS = [0.2, 0.4, 0.6, 0.8] as const
 const FINAL_Z_POSITIONS = [0.62, 0.38, 0.54, 0.3] as const
-const CORRECTION_DURATION_MS = 180
-const SETTLE_TIMEOUT_MS = 2200
-const SETTLE_FRAMES_REQUIRED = 6
+const CORRECTION_DURATION_MS = 90
+const SETTLE_TIMEOUT_MS = 1100
+const SETTLE_FRAMES_REQUIRED = 4
 
 const LAUNCH_SEEDS = [
   { impulse: new Vec3(-0.8, 5.2, -1.6), torque: new Vec3(-5, 3, 2) },

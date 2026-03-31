@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import { Board } from '@/components/board/Board'
 import { HomeZone } from '@/components/board/HomeZone'
 import { PieceToken } from '@/components/board/PieceToken'
@@ -11,10 +12,148 @@ import { YutThrowOverlay } from '@/components/throw/YutThrowOverlay'
 import { shakeBoard, useHopAnimation } from '@/hooks/useHopAnimation'
 import { BOARD_VIEWBOX, STATION_COORDS } from '@/lib/yut/boardCoords'
 import { generateThrow } from '@/lib/yut/throw'
-import { HOME } from '@/lib/yut/types'
+import { FINISH, HOME } from '@/lib/yut/types'
 import { useGameStore } from '@/store/gameStore'
 
 const ENTRY_STATION = 0
+const IMPACT_EFFECT_DURATION_MS = 360
+const IMPACT_EFFECT_GAP_MS = 90
+
+interface ImpactEffect {
+  kind: 'capture' | 'stack'
+  label: string
+  stationId: number
+}
+
+function formatStationLabel(stationId: number): string {
+  if (stationId === HOME) {
+    return 'HOME'
+  }
+
+  if (stationId === FINISH) {
+    return '완주'
+  }
+
+  if (stationId === ENTRY_STATION) {
+    return '입구 S0'
+  }
+
+  if (stationId === 22) {
+    return '중앙 S22'
+  }
+
+  return `S${stationId}`
+}
+
+function MoveGuideMarker({
+  x,
+  y,
+  badge,
+  label,
+  tone,
+}: {
+  x: number
+  y: number
+  badge: string
+  label: string
+  tone: 'start' | 'end'
+}): React.JSX.Element {
+  const palette = tone === 'start'
+    ? {
+        fill: 'rgba(255, 244, 218, 0.92)',
+        inner: 'rgba(160, 106, 42, 0.18)',
+        stroke: '#A06A2A',
+        text: '#6E4B21',
+      }
+    : {
+        fill: 'rgba(235, 255, 229, 0.95)',
+        inner: 'rgba(76, 175, 80, 0.18)',
+        stroke: '#2E7D32',
+        text: '#1B5E20',
+      }
+
+  return (
+    <g transform={`translate(${x} ${y})`} data-testid={`move-guide-${tone}`}>
+      <circle r={20} fill={palette.fill} stroke={palette.stroke} strokeWidth={2.5} />
+      <circle r={12} fill={palette.inner} stroke={palette.stroke} strokeWidth={1.5} />
+      <rect x={-25} y={-42} width={50} height={18} rx={9} fill="rgba(255,255,255,0.94)" />
+      <text
+        y={-29}
+        textAnchor="middle"
+        fontSize={10}
+        fontWeight={700}
+        fill={palette.text}
+      >
+        {badge}
+      </text>
+      <text
+        y={37}
+        textAnchor="middle"
+        fontSize={11}
+        fontWeight={700}
+        fill={palette.text}
+      >
+        {label}
+      </text>
+    </g>
+  )
+}
+
+function ImpactBadge({
+  x,
+  y,
+  kind,
+  label,
+}: {
+  x: number
+  y: number
+  kind: ImpactEffect['kind']
+  label: string
+}): React.JSX.Element {
+  const palette = kind === 'capture'
+    ? {
+        glow: 'rgba(255, 109, 91, 0.26)',
+        ring: '#FF6D5B',
+        badge: '#FFF1ED',
+        text: '#A63A27',
+      }
+    : {
+        glow: 'rgba(255, 193, 7, 0.24)',
+        ring: '#F9A825',
+        badge: '#FFF9E2',
+        text: '#8C5A00',
+      }
+
+  return (
+    <motion.g
+      transform={`translate(${x} ${y})`}
+      data-testid={`impact-effect-${kind}`}
+      initial={{ opacity: 0, scale: 0.72 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.08 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+    >
+      <motion.circle
+        r={18}
+        fill={palette.glow}
+        stroke={palette.ring}
+        strokeWidth={2}
+        animate={{ r: [18, 30, 18], opacity: [0.95, 0.42, 0.95] }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      />
+      <rect x={-36} y={-54} width={72} height={24} rx={12} fill={palette.badge} stroke={palette.ring} />
+      <text
+        y={-38}
+        textAnchor="middle"
+        fontSize={12}
+        fontWeight={800}
+        fill={palette.text}
+      >
+        {label}
+      </text>
+    </motion.g>
+  )
+}
 
 export function PlayScreen(): React.JSX.Element {
   const phase = useGameStore((state) => state.phase)
@@ -36,6 +175,8 @@ export function PlayScreen(): React.JSX.Element {
   const completeAnimation = useGameStore((state) => state.completeAnimation)
   const { scope, isAnimating, startHop } = useHopAnimation()
   const boardFrameRef = useRef<HTMLDivElement | null>(null)
+  const impactTimerIdsRef = useRef<number[]>([])
+  const [impactEffect, setImpactEffect] = useState<ImpactEffect | null>(null)
 
   const playerHomePieces = pieces
     .filter((piece) => piece.team === 'player' && piece.position.station === HOME)
@@ -65,10 +206,18 @@ export function PlayScreen(): React.JSX.Element {
       : ENTRY_STATION
     : null
   const startCoord = startStation !== null ? STATION_COORDS[startStation] : null
+  const destinationCoord = pendingAnimation && pendingAnimation.finalStation >= 0
+    ? STATION_COORDS[pendingAnimation.finalStation]
+    : null
+  const visiblePendingResults = phase === 'throwing'
+    ? turnState.pendingMoves.slice(0, -1)
+    : turnState.pendingMoves
   const queuedResults = [
     ...(activeMove ? [activeMove] : []),
-    ...turnState.pendingMoves,
+    ...visiblePendingResults,
   ]
+  const sourceLabel = pendingAnimation ? formatStationLabel(pendingAnimation.fromStation) : null
+  const destinationLabel = pendingAnimation ? formatStationLabel(pendingAnimation.finalStation) : null
 
   useEffect(() => {
     if (phase !== 'animatingMove' || !pendingAnimation) {
@@ -76,12 +225,21 @@ export function PlayScreen(): React.JSX.Element {
     }
 
     let cancelled = false
+    impactTimerIdsRef.current.forEach((timerId) => window.clearTimeout(timerId))
+    impactTimerIdsRef.current = []
+
+    const waitMs = (durationMs: number): Promise<void> =>
+      new Promise((resolve) => {
+        const timerId = window.setTimeout(() => {
+          impactTimerIdsRef.current = impactTimerIdsRef.current.filter((id) => id !== timerId)
+          resolve()
+        }, durationMs)
+
+        impactTimerIdsRef.current.push(timerId)
+      })
 
     void (async () => {
-      if (pendingAnimation.capturedPieceIds.length > 0) {
-        shakeBoard(boardFrameRef)
-      }
-
+      setImpactEffect(null)
       if (pendingAnimation.finalStation >= 0) {
         await startHop(
           pendingAnimation.intermediateStations,
@@ -89,15 +247,54 @@ export function PlayScreen(): React.JSX.Element {
         )
       }
 
+      const impactQueue: ImpactEffect[] = []
+
+      if (pendingAnimation.capturedPieceIds.length > 0 && pendingAnimation.finalStation >= 0) {
+        impactQueue.push({
+          kind: 'capture',
+          label: '잡았어!',
+          stationId: pendingAnimation.finalStation,
+        })
+      }
+
+      if (pendingStack !== null && pendingAnimation.finalStation >= 0) {
+        impactQueue.push({
+          kind: 'stack',
+          label: '업기!',
+          stationId: pendingAnimation.finalStation,
+        })
+      }
+
+      for (const [index, effect] of impactQueue.entries()) {
+        if (cancelled) {
+          return
+        }
+
+        if (effect.kind === 'capture') {
+          shakeBoard(boardFrameRef)
+        }
+
+        setImpactEffect(effect)
+        await waitMs(IMPACT_EFFECT_DURATION_MS)
+        setImpactEffect(null)
+
+        if (index < impactQueue.length - 1) {
+          await waitMs(IMPACT_EFFECT_GAP_MS)
+        }
+      }
+
       if (!cancelled) {
+        setImpactEffect(null)
         completeAnimation()
       }
     })()
 
     return () => {
       cancelled = true
+      impactTimerIdsRef.current.forEach((timerId) => window.clearTimeout(timerId))
+      impactTimerIdsRef.current = []
     }
-  }, [completeAnimation, pendingAnimation, phase, startHop])
+  }, [completeAnimation, pendingAnimation, pendingStack, phase, startHop])
 
   return (
     <main className="min-h-dvh bg-[linear-gradient(180deg,#fff8ee_0%,#f7e4bf_55%,#efc98e_100%)] px-4 py-6">
@@ -124,6 +321,30 @@ export function PlayScreen(): React.JSX.Element {
             <span className="text-sm text-[#7A5A32]">대기 중인 윷 없음</span>
           )}
         </div>
+
+        {pendingAnimation && sourceLabel && destinationLabel ? (
+          <div
+            data-testid="move-route-panel"
+            className="grid gap-2 rounded-[26px] bg-[#FFF7E2] px-4 py-3 text-[#6E4B21] shadow-[0_14px_30px_rgba(120,75,24,0.08)] sm:grid-cols-2"
+          >
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A06A2A]">
+                이동 경로
+              </p>
+              <p className="mt-1 text-sm font-medium">말이 이동하는 동안 출발지와 도착지를 표시합니다.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-sm font-semibold">
+              <div className="rounded-[18px] bg-white/82 px-3 py-2">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#A06A2A]">출발</p>
+                <p className="mt-1 text-base text-[#1A1A2E]">{sourceLabel}</p>
+              </div>
+              <div className="rounded-[18px] bg-[#F2FFE9] px-3 py-2">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-[#4A8C30]">도착</p>
+                <p className="mt-1 text-base text-[#1B5E20]">{destinationLabel}</p>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <HomeZone
           playerHomePieces={playerHomePieces}
@@ -168,6 +389,38 @@ export function PlayScreen(): React.JSX.Element {
                   onSelect={() => {}}
                 />
               </g>
+
+              {startCoord && sourceLabel ? (
+                <MoveGuideMarker
+                  x={startCoord.x}
+                  y={startCoord.y}
+                  badge="출발"
+                  label={sourceLabel}
+                  tone="start"
+                />
+              ) : null}
+
+              {destinationCoord && destinationLabel ? (
+                <MoveGuideMarker
+                  x={destinationCoord.x}
+                  y={destinationCoord.y}
+                  badge="도착"
+                  label={destinationLabel}
+                  tone="end"
+                />
+              ) : null}
+
+              <AnimatePresence>
+                {impactEffect && destinationCoord ? (
+                  <ImpactBadge
+                    key={`${impactEffect.kind}-${impactEffect.stationId}`}
+                    x={destinationCoord.x}
+                    y={destinationCoord.y}
+                    kind={impactEffect.kind}
+                    label={impactEffect.label}
+                  />
+                ) : null}
+              </AnimatePresence>
             </svg>
           ) : null}
 

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AI_REACTION_EMOJIS } from '@/components/game/AiReactionBubble'
 import { PlayScreen } from '@/components/screens/PlayScreen'
@@ -72,6 +72,7 @@ vi.mock('@/hooks/useHopAnimation', () => ({
     scope: { current: null },
     isAnimating: false,
     startHop: vi.fn().mockResolvedValue(undefined),
+    animateCapture: vi.fn().mockResolvedValue(undefined),
   }),
   shakeBoard: vi.fn(),
 }))
@@ -168,6 +169,115 @@ describe('PlayScreen', () => {
 
     expect(screen.getByTestId('home-zone')).toBeInTheDocument()
     expect(screen.getByTestId('board')).toBeInTheDocument()
+  })
+
+  it('hides the currently throwing result from Queue until reveal completes', () => {
+    storeState = {
+      ...storeState,
+      phase: 'throwing',
+      activeThrow: { name: 'gae', steps: 2, grantsExtra: false },
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [{ name: 'gae', steps: 2, grantsExtra: false }],
+      },
+    }
+
+    render(<PlayScreen />)
+
+    expect(screen.getByText('대기 중인 윷 없음')).toBeInTheDocument()
+    expect(screen.queryByText('개')).toBeNull()
+  })
+
+  it('shows the move route summary while a piece is animating', () => {
+    storeState = {
+      ...storeState,
+      phase: 'animatingMove',
+      pieces: [
+        {
+          id: 'p1',
+          team: 'player',
+          position: { station: 5, routeId: 'outer', routeIndex: 5 },
+          stackedPieceIds: [],
+          stackedWith: null,
+        },
+      ],
+      pendingAnimation: {
+        pieceId: 'p1',
+        fromStation: -1,
+        intermediateStations: [],
+        finalStation: 5,
+        capturedPieceIds: [],
+      },
+    }
+
+    render(<PlayScreen />)
+
+    expect(screen.getByTestId('move-route-panel')).toBeInTheDocument()
+    expect(screen.getAllByText('HOME').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('S5').length).toBeGreaterThan(0)
+  })
+
+  it('shows a capture effect badge after the hop resolves', async () => {
+    storeState = {
+      ...storeState,
+      phase: 'animatingMove',
+      pieces: [
+        {
+          id: 'p1',
+          team: 'player',
+          position: { station: 5, routeId: 'outer', routeIndex: 5 },
+          stackedPieceIds: [],
+          stackedWith: null,
+        },
+      ],
+      pendingAnimation: {
+        pieceId: 'p1',
+        fromStation: 3,
+        intermediateStations: [4],
+        finalStation: 5,
+        capturedPieceIds: ['ai1'],
+      },
+    }
+
+    render(<PlayScreen />)
+
+    await waitFor(() => {
+      expect(screen.getByText('잡았어!')).toBeInTheDocument()
+    })
+  })
+
+  it('shows a stack effect badge before the stack prompt resolves', async () => {
+    storeState = {
+      ...storeState,
+      phase: 'animatingMove',
+      pieces: [
+        {
+          id: 'p1',
+          team: 'player',
+          position: { station: 5, routeId: 'outer', routeIndex: 5 },
+          stackedPieceIds: [],
+          stackedWith: null,
+        },
+      ],
+      pendingAnimation: {
+        pieceId: 'p1',
+        fromStation: 3,
+        intermediateStations: [4],
+        finalStation: 5,
+        capturedPieceIds: [],
+      },
+      pendingStack: {
+        arrivingPieceId: 'p1',
+        targetPieceId: 'p2',
+      },
+    }
+
+    render(<PlayScreen />)
+
+    await waitFor(() => {
+      expect(screen.getByText('업기!')).toBeInTheDocument()
+    })
   })
 
   it('renders stack prompt actions during confirmingStack', () => {
