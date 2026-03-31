@@ -9,11 +9,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Game Logic
 
-- [ ] **GAME-01**: 윷 던지기 시 도/개/걸/윷/모 결과가 정확히 판정된다
+- [x] **GAME-01**: 윷 던지기 시 도/개/걸/윷/모 결과가 정확히 판정된다
 - [ ] **GAME-02**: 윷/모 결과 시 추가 던지기가 부여되며 무제한 체이닝이 가능하다
 - [ ] **GAME-03**: 던지기 결과가 큐에 쌓이고 순서대로 말 이동에 사용된다
-- [ ] **GAME-04**: 29칸 윷판 경로 그래프가 외곽 20칸 + 지름길 9칸으로 구성된다
-- [ ] **GAME-05**: 코너 위치(모/앞밭, 뒷모 등)에서 지름길 진입 여부를 선택할 수 있다
+- [x] **GAME-04**: 29칸 윷판 경로 그래프가 외곽 20칸 + 지름길 9칸으로 구성된다
+- [x] **GAME-05**: 코너 위치(모/앞밭, 뒷모 등)에서 지름길 진입 여부를 선택할 수 있다
 - [ ] **GAME-06**: 말이 윷 결과 수만큼 경로를 따라 정확히 이동한다
 - [ ] **GAME-07**: 상대 말 위치에 도착하면 잡기가 실행되고 추가 턴이 부여된다
 - [ ] **GAME-08**: 내 말 위치에 도착 시 엎을지(스택) 선택할 수 있다
@@ -100,11 +100,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GAME-01 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-01 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-02 | Phase 1: Board Graph & Movement Logic | Pending |
 | GAME-03 | Phase 1: Board Graph & Movement Logic | Pending |
-| GAME-04 | Phase 1: Board Graph & Movement Logic | Pending |
-| GAME-05 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-04 | Phase 1: Board Graph & Movement Logic | Complete |
+| GAME-05 | Phase 1: Board Graph & Movement Logic | Complete |
 | GAME-06 | Phase 1: Board Graph & Movement Logic | Pending |
 | GAME-07 | Phase 2: Capture, Stacking & AI | Pending |
 | GAME-08 | Phase 2: Capture, Stacking & AI | Pending |
