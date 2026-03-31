@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-31T08:53:50.696Z"
+status: verifying
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-03-31T08:59:14.428Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 
 Phase: 01 (board-graph-movement-logic) — EXECUTING
 Plan: 3 of 3
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-31
 
 Progress: [░░░░░░░░░░] 0%
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 01 P01 | 4min | 2 tasks | 18 files |
 | Phase 01 P02 | 4min | 3 tasks | 2 files |
+| Phase 01 P03 | 3min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work:
 - [Phase 01]: Throw uses 4 independent Math.random() calls with 0.5 threshold matching real yut stick physics
 - [Phase 01]: Diagonal/center routes finish immediately on any step beyond last station (no D-07 exception); only outer route has finish-line landing semantics
 - [Phase 01]: Branch detection restricted to outer route only -- pieces on shortcut routes skip branch check at S5/S10
+- [Phase 01]: processThrow uses decrement-then-increment: throwsRemaining-1 + (grantsExtra ? 1 : 0) for correct yut/mo chaining
 
 ### Pending Todos
 
@@ -83,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T08:53:50.694Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-03-31T08:59:14.426Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None

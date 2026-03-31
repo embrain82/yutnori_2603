@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md -- Project scaffold + types + board graph + throw generation
 - [x] 01-02-PLAN.md -- Movement resolution engine (TDD)
-- [ ] 01-03-PLAN.md -- Game state operations: throw queue, win condition, impossible moves (TDD)
+- [x] 01-03-PLAN.md -- Game state operations: throw queue, win condition, impossible moves (TDD)
 
 ### Phase 2: Capture, Stacking & AI
 **Goal**: Complete game rules including piece interactions (capture and stacking) and an AI opponent that plays full games at easy difficulty
