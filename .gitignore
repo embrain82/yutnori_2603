@@ -37,3 +37,6 @@ next-env.d.ts
 
 # coverage
 /coverage
+
+# reference projects
+/260330_rps
