@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { VictoryConfetti } from '@/components/effects/VictoryConfetti'
 import { DefeatEffect } from '@/components/effects/DefeatEffect'
@@ -23,6 +23,9 @@ export default function Game(): React.JSX.Element {
   const phase = useGameStore((state) => state.phase)
   const runAiTurn = useGameStore((state) => state.runAiTurn)
   const timerRef = useRef<number | null>(null)
+  const triggerAiTurn = useEffectEvent(() => {
+    runAiTurn()
+  })
 
   usePostMessage()
 
@@ -35,7 +38,8 @@ export default function Game(): React.JSX.Element {
     // The thinking delay lives in the UI so the store can stay synchronous and deterministic in tests.
     if (phase === 'aiThinking') {
       timerRef.current = window.setTimeout(() => {
-        runAiTurn()
+        timerRef.current = null
+        triggerAiTurn()
       }, 900)
     }
 
@@ -45,7 +49,7 @@ export default function Game(): React.JSX.Element {
         timerRef.current = null
       }
     }
-  }, [phase, runAiTurn])
+  }, [phase])
 
   return (
     <div className="relative min-h-dvh overflow-hidden [contain:content]">

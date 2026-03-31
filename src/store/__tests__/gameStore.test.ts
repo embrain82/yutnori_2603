@@ -60,15 +60,20 @@ describe('gameStore', () => {
     expect(state.turnState.throwsRemaining).toBe(1)
   })
 
-  it('finishThrowReveal enters selectingPiece with a playable move after a non-extra throw', () => {
+  it('finishThrowReveal auto-moves when the opening choices are equivalent', () => {
     useGameStore.getState().startGame()
     useGameStore.getState().startThrow(makeThrow('do', 1, false))
     useGameStore.getState().finishThrowReveal()
     const state = useGameStore.getState()
 
-    expect(state.phase).toBe('selectingPiece')
-    expect(state.activeMove?.name).toBe('do')
-    expect(state.moveCandidates.length).toBeGreaterThan(0)
+    expect(state.phase).toBe('animatingMove')
+    expect(state.pendingAnimation).toEqual({
+      pieceId: 'p1',
+      fromStation: -1,
+      intermediateStations: [],
+      finalStation: 1,
+      capturedPieceIds: [],
+    })
   })
 
   it('finishThrowReveal auto-moves when only one player piece can still move', () => {
@@ -159,9 +164,28 @@ describe('gameStore', () => {
   })
 
   it('selectPiece auto-resolves when the chosen piece has one destination', () => {
-    useGameStore.getState().startGame()
-    useGameStore.getState().startThrow(makeThrow('do', 1, false))
-    useGameStore.getState().finishThrowReveal()
+    const pieces = [
+      makePiece('p1', 'player', 3, ROUTE_IDS.OUTER, 3),
+      makePiece('p2', 'player', FINISH),
+      makePiece('ai1', 'ai', -1),
+      makePiece('ai2', 'ai', FINISH),
+    ]
+    const throwResult = makeThrow('do', 1, false)
+
+    useGameStore.setState({
+      ...initialState,
+      phase: 'selectingPiece',
+      pieces,
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [],
+      },
+      session: createSession(),
+      activeMove: throwResult,
+      moveCandidates: buildMoveCandidates(pieces, 'player', throwResult),
+    })
+
     useGameStore.getState().selectPiece('p1')
     const state = useGameStore.getState()
 
@@ -170,9 +194,9 @@ describe('gameStore', () => {
     expect(state.validDestinations).toEqual([])
     expect(state.pendingAnimation).toEqual({
       pieceId: 'p1',
-      fromStation: -1,
+      fromStation: 3,
       intermediateStations: [],
-      finalStation: 1,
+      finalStation: 4,
       capturedPieceIds: [],
     })
   })
@@ -272,12 +296,48 @@ describe('gameStore', () => {
     useGameStore.getState().startGame()
     useGameStore.getState().startThrow(makeThrow('do', 1, false))
     useGameStore.getState().finishThrowReveal()
-    useGameStore.getState().selectPiece('p1')
     useGameStore.getState().completeAnimation()
     const state = useGameStore.getState()
 
     expect(state.phase).toBe('aiThinking')
     expect(state.turnState.activeTeam).toBe('ai')
+  })
+
+  it('finishThrowReveal auto-moves one of the two HOME pieces on the first turn', () => {
+    useGameStore.setState({
+      ...initialState,
+      phase: 'throwing',
+      pieces: [
+        makePiece('p1', 'player', -1),
+        makePiece('p2', 'player', -1),
+        makePiece('ai1', 'ai', -1),
+        makePiece('ai2', 'ai', -1),
+      ],
+      turnState: {
+        activeTeam: 'player',
+        throwsRemaining: 0,
+        pendingMoves: [makeThrow('gae', 2, false)],
+      },
+      activeThrow: makeThrow('gae', 2, false),
+      session: createSession(),
+      currentTurnRecord: {
+        team: 'player',
+        throws: [makeThrow('gae', 2, false)],
+        moves: [],
+      },
+    })
+
+    useGameStore.getState().finishThrowReveal()
+    const state = useGameStore.getState()
+
+    expect(state.phase).toBe('animatingMove')
+    expect(state.pendingAnimation).toEqual({
+      pieceId: 'p1',
+      fromStation: -1,
+      intermediateStations: [1],
+      finalStation: 2,
+      capturedPieceIds: [],
+    })
   })
 
   it('restartGame resets gameplay while preserving couponConfig', () => {

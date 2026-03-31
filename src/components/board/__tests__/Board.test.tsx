@@ -60,6 +60,7 @@ describe('Board', () => {
     const { getByTestId, getByText } = render(<Board />)
 
     expect(getByTestId('board-start-marker')).toBeInTheDocument()
+    expect(getByTestId('board-start-label')).toHaveAttribute('transform', 'translate(34 196)')
     expect(getByText('출발')).toBeInTheDocument()
   })
 })

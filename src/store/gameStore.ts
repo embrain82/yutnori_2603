@@ -148,6 +148,10 @@ function clearMoveSelection(): Pick<
   }
 }
 
+type AutoMoveResolution =
+  | { kind: 'candidate'; candidate: MoveCandidate }
+  | { kind: 'piece'; pieceId: string }
+
 function findAutoSelectablePieceId(candidates: MoveCandidate[]): string | null {
   const uniquePieceIds = Array.from(
     new Set(candidates.map((candidate) => candidate.pieceId))
@@ -158,6 +162,65 @@ function findAutoSelectablePieceId(candidates: MoveCandidate[]): string | null {
   }
 
   return uniquePieceIds[0]
+}
+
+function buildAutoMoveSignature(
+  candidate: MoveCandidate,
+  pieces: PieceState[]
+): string {
+  const movingPiece = pieces.find((piece) => piece.id === candidate.pieceId)
+  if (!movingPiece) {
+    return candidate.pieceId
+  }
+
+  return [
+    movingPiece.position.station,
+    movingPiece.position.routeId,
+    movingPiece.position.routeIndex,
+    candidate.routeChoice,
+    candidate.moveResult.newPosition.station,
+    candidate.moveResult.newPosition.routeId,
+    candidate.moveResult.newPosition.routeIndex,
+    candidate.moveResult.finished ? 'finish' : 'continue',
+    candidate.moveResult.intermediateStations.join(','),
+  ].join('|')
+}
+
+function findAutoMoveResolution(
+  pieces: PieceState[],
+  candidates: MoveCandidate[]
+): AutoMoveResolution | null {
+  const autoSelectablePieceId = findAutoSelectablePieceId(candidates)
+  if (autoSelectablePieceId) {
+    const pieceCandidates = candidates.filter(
+      (candidate) => candidate.pieceId === autoSelectablePieceId
+    )
+
+    if (pieceCandidates.length === 1) {
+      return {
+        kind: 'candidate',
+        candidate: pieceCandidates[0],
+      }
+    }
+
+    return {
+      kind: 'piece',
+      pieceId: autoSelectablePieceId,
+    }
+  }
+
+  const uniqueSignatures = new Set(
+    candidates.map((candidate) => buildAutoMoveSignature(candidate, pieces))
+  )
+
+  if (uniqueSignatures.size === 1) {
+    return {
+      kind: 'candidate',
+      candidate: candidates[0],
+    }
+  }
+
+  return null
 }
 
 function ensureTurnRecord(record: TurnRecord | null, team: Team): TurnRecord {
@@ -375,11 +438,11 @@ function prepareNextPlayableState(
     }
   }
 
-  const autoSelectablePieceId = findAutoSelectablePieceId(nextPlayable.moveCandidates)
-  if (autoSelectablePieceId) {
-    const pieceCandidates = nextPlayable.moveCandidates.filter(
-      (candidate) => candidate.pieceId === autoSelectablePieceId
-    )
+  const autoMoveResolution = findAutoMoveResolution(
+    state.pieces,
+    nextPlayable.moveCandidates
+  )
+  if (autoMoveResolution) {
     const preparedState = {
       ...state,
       turnState: nextPlayable.turnState,
@@ -387,14 +450,18 @@ function prepareNextPlayableState(
       moveCandidates: nextPlayable.moveCandidates,
     }
 
-    if (pieceCandidates.length === 1) {
+    if (autoMoveResolution.kind === 'candidate') {
       return {
         turnState: nextPlayable.turnState,
         activeMove: nextPlayable.activeMove,
         moveCandidates: nextPlayable.moveCandidates,
-        ...beginCandidateResolution(preparedState, pieceCandidates[0]),
+        ...beginCandidateResolution(preparedState, autoMoveResolution.candidate),
       }
     }
+
+    const pieceCandidates = nextPlayable.moveCandidates.filter(
+      (candidate) => candidate.pieceId === autoMoveResolution.pieceId
+    )
 
     return {
       phase: 'selectingPiece',
@@ -404,7 +471,7 @@ function prepareNextPlayableState(
       pendingMoveRecord: null,
       activeMove: nextPlayable.activeMove,
       moveCandidates: nextPlayable.moveCandidates,
-      selectedPieceId: autoSelectablePieceId,
+      selectedPieceId: autoMoveResolution.pieceId,
       validDestinations: mapDestinations(pieceCandidates),
     }
   }

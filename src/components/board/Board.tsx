@@ -166,26 +166,38 @@ export function Board({
           stroke="#A06A2A"
           strokeWidth={2}
         />
-        <rect
-          x={startCoord.x + 16}
-          y={startCoord.y - 36}
-          width={46}
-          height={20}
-          rx={10}
-          fill="rgba(255, 250, 240, 0.96)"
-          stroke="#A06A2A"
-          strokeWidth={1.5}
-        />
-        <text
-          x={startCoord.x + 39}
-          y={startCoord.y - 22}
-          textAnchor="middle"
-          fontSize={11}
-          fontWeight={800}
-          fill="#6E4B21"
+        <g
+          data-testid="board-start-label"
+          transform={`translate(${startCoord.x - 6} ${startCoord.y - 54})`}
         >
-          출발
-        </text>
+          <rect
+            x={-30}
+            y={0}
+            width={56}
+            height={20}
+            rx={10}
+            fill="rgba(255, 250, 240, 0.96)"
+            stroke="#A06A2A"
+            strokeWidth={1.5}
+          />
+          <path
+            d="M -8 20 L -2 29 L 4 20"
+            fill="rgba(255, 250, 240, 0.96)"
+            stroke="#A06A2A"
+            strokeWidth={1.5}
+            strokeLinejoin="round"
+          />
+          <text
+            x={-2}
+            y={14}
+            textAnchor="middle"
+            fontSize={11}
+            fontWeight={800}
+            fill="#6E4B21"
+          >
+            출발
+          </text>
+        </g>
       </g>
 
       {/* Layer 3: Destination highlights -- only when a piece is selected and not animating */}

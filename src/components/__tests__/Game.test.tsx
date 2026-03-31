@@ -104,4 +104,32 @@ describe('Game', () => {
     })
     expect(runAiTurn).toHaveBeenCalledTimes(1)
   })
+
+  it('keeps the same AI turn timer even if the callback reference changes mid-wait', () => {
+    vi.useFakeTimers()
+    const firstRunAiTurn = vi.fn()
+    const secondRunAiTurn = vi.fn()
+    storeState = { phase: 'aiThinking', runAiTurn: firstRunAiTurn }
+
+    const view = render(<Game />)
+
+    act(() => {
+      vi.advanceTimersByTime(500)
+    })
+
+    storeState = { phase: 'aiThinking', runAiTurn: secondRunAiTurn }
+    view.rerender(<Game />)
+
+    act(() => {
+      vi.advanceTimersByTime(399)
+    })
+    expect(firstRunAiTurn).not.toHaveBeenCalled()
+    expect(secondRunAiTurn).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(1)
+    })
+    expect(firstRunAiTurn).not.toHaveBeenCalled()
+    expect(secondRunAiTurn).toHaveBeenCalledTimes(1)
+  })
 })
