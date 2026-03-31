@@ -48,12 +48,11 @@ Plans:
   3. When a stacked group is captured, all pieces in the group return individually to start
   4. AI automatically throws and selects moves, completing full games without human input
   5. Over many games, the player wins approximately 70-80% of the time against AI
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Capture and stacking mechanics with type extensions (TDD)
+- [ ] 02-02-PLAN.md -- AI opponent with heuristic scoring, win rate validation, and barrel export (TDD)
 
 ### Phase 3: 2D Board Rendering
 **Goal**: Users see the Yut Nori board with pieces, can select pieces to move, see valid destinations highlighted, and watch pieces animate along their path
@@ -132,8 +131,8 @@ Note: Phase 3 and Phase 4 can run in parallel (different dependency chains).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Board Graph & Movement Logic | 0/3 | Not started | - |
-| 2. Capture, Stacking & AI | 0/3 | Not started | - |
+| 1. Board Graph & Movement Logic | 3/3 | Complete | 2026-03-31 |
+| 2. Capture, Stacking & AI | 0/2 | Planning complete | - |
 | 3. 2D Board Rendering | 0/3 | Not started | - |
 | 4. 3D Yut Throwing | 0/3 | Not started | - |
 | 5. Game Screens & Integration | 0/3 | Not started | - |
