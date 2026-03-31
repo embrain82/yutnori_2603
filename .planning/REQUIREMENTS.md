@@ -67,7 +67,7 @@ Deferred to future release. Tracked but not in current roadmap.
 
 ### Enhanced Interaction
 
-- **THROW-V2-01**: 스와이프/플릭 제스처로 윷 던지기 (터치 속도 → 물리 임펄스)
+- **THROW-V2-01**: 스와이프/플릭 제스처로 윷 던지기 (터치 속도 -> 물리 임펄스)
 - **THROW-V2-02**: 던지기 시 카메라 흔들림/줌 효과
 - **VIS-V2-01**: 잡기 시 특별 파티클 이펙트
 - **VIS-V2-02**: 말 이동 시 트레일 효과
@@ -100,18 +100,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GAME-01 ~ GAME-12 | TBD | Pending |
-| AI-01 ~ AI-04 | TBD | Pending |
-| BOARD-01 ~ BOARD-06 | TBD | Pending |
-| THROW-01 ~ THROW-05 | TBD | Pending |
-| VIS-01 ~ VIS-06 | TBD | Pending |
-| INTG-01 ~ INTG-03 | TBD | Pending |
+| GAME-01 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-02 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-03 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-04 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-05 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-06 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-07 | Phase 2: Capture, Stacking & AI | Pending |
+| GAME-08 | Phase 2: Capture, Stacking & AI | Pending |
+| GAME-09 | Phase 2: Capture, Stacking & AI | Pending |
+| GAME-10 | Phase 2: Capture, Stacking & AI | Pending |
+| GAME-11 | Phase 1: Board Graph & Movement Logic | Pending |
+| GAME-12 | Phase 1: Board Graph & Movement Logic | Pending |
+| AI-01 | Phase 2: Capture, Stacking & AI | Pending |
+| AI-02 | Phase 2: Capture, Stacking & AI | Pending |
+| AI-03 | Phase 2: Capture, Stacking & AI | Pending |
+| AI-04 | Phase 2: Capture, Stacking & AI | Pending |
+| BOARD-01 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-02 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-03 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-04 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-05 | Phase 3: 2D Board Rendering | Pending |
+| BOARD-06 | Phase 3: 2D Board Rendering | Pending |
+| THROW-01 | Phase 4: 3D Yut Throwing | Pending |
+| THROW-02 | Phase 4: 3D Yut Throwing | Pending |
+| THROW-03 | Phase 4: 3D Yut Throwing | Pending |
+| THROW-04 | Phase 4: 3D Yut Throwing | Pending |
+| THROW-05 | Phase 4: 3D Yut Throwing | Pending |
+| VIS-01 | Phase 6: Visual Polish & Delight | Pending |
+| VIS-02 | Phase 5: Game Screens & Integration | Pending |
+| VIS-03 | Phase 5: Game Screens & Integration | Pending |
+| VIS-04 | Phase 5: Game Screens & Integration | Pending |
+| VIS-05 | Phase 6: Visual Polish & Delight | Pending |
+| VIS-06 | Phase 6: Visual Polish & Delight | Pending |
+| INTG-01 | Phase 5: Game Screens & Integration | Pending |
+| INTG-02 | Phase 5: Game Screens & Integration | Pending |
+| INTG-03 | Phase 5: Game Screens & Integration | Pending |
 
 **Coverage:**
 - v1 requirements: 36 total
-- Mapped to phases: 0
-- Unmapped: 36
+- Mapped to phases: 36
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-31*
-*Last updated: 2026-03-31 after initial definition*
+*Last updated: 2026-03-31 after roadmap creation*
