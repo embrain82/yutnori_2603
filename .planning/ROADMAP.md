@@ -31,12 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A piece placed at any board position moves exactly the correct number of steps along the right path, including shortcut entry at corners
   4. When all 2 pieces of a team pass through the finish point, the game correctly detects victory
   5. Impossible moves (no valid piece to move) are automatically skipped without breaking game flow
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Project scaffold + types + board graph + throw generation
+- [ ] 01-02-PLAN.md -- Movement resolution engine (TDD)
+- [ ] 01-03-PLAN.md -- Game state operations: throw queue, win condition, impossible moves (TDD)
 
 ### Phase 2: Capture, Stacking & AI
 **Goal**: Complete game rules including piece interactions (capture and stacking) and an AI opponent that plays full games at easy difficulty
