@@ -12,7 +12,7 @@ export const motion = new Proxy(
   {},
   {
     get(_target, prop: string) {
-      return React.forwardRef(function MotionComponent(
+      const MotionComponent = React.forwardRef(function MotionComponent(
         props: Record<string, unknown>,
         ref: React.Ref<unknown>,
       ) {
@@ -36,6 +36,8 @@ export const motion = new Proxy(
         } = props
         return React.createElement(prop, { ...domProps, ref })
       })
+      MotionComponent.displayName = `motion.${prop}`
+      return MotionComponent
     },
   },
 )

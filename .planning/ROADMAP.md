@@ -69,7 +69,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Board coordinate mapping (TDD) + static SVG board with 29 stations
-- [ ] 03-02-PLAN.md -- Piece tokens with team colors, stack badges, and HOME zone
+- [x] 03-02-PLAN.md -- Piece tokens with team colors, stack badges, and HOME zone
 - [ ] 03-03-PLAN.md -- Interaction wiring: selection highlights, branch choice, hop animation
 
 ### Phase 4: 3D Yut Throwing
